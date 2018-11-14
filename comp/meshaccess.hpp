@@ -247,7 +247,7 @@ namespace ngcomp
     MPI_Comm mesh_comm;
   public:
     /// connects to Netgen - mesh
-    MeshAccess (shared_ptr<netgen::Mesh> amesh = NULL);
+    MeshAccess (shared_ptr<netgen::Ngx_Mesh> amesh = NULL);
     /// loads mesh from file
     MeshAccess (string filename, MPI_Comm amesh_comm = ngs_comm)
       : MeshAccess()

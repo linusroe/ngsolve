@@ -309,9 +309,16 @@ mesh (netgen.Mesh): a mesh generated from Netgen
 )raw_string") , py::dynamic_attr());
     
   mesh_access
-    .def(py::init<shared_ptr<netgen::Mesh>>(),
+    .def(py::init<shared_ptr<netgen::Ngx_Mesh>>(),
          py::arg("ngmesh"),
-         "Make an NGSolve-mesh from a Netgen-mesh")
+         "Make an NGSolve-mesh from an Ngx_Mesh")
+
+    .def(py::init([](shared_ptr<netgen::Mesh> mesh)
+                  {
+                    return make_shared<MeshAccess>(make_shared<netgen::Ngx_Mesh>(mesh));
+                  }),
+         py::arg("ngmesh"), 
+         "Make an NGSolve-mesh from a Netgen mesh")
 
     .def(py::init([](const string & filename, PyMPI_Comm c)
                   {
