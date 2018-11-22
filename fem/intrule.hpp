@@ -9,7 +9,7 @@
 
 namespace ngcomp
 {
-  class MeshAccess;
+  template <typename meshtype> class MeshAccess;
 }
 namespace ngfem
 {
@@ -275,10 +275,11 @@ namespace ngfem
   };
 
 
+  template <typename meshtype>
   struct MeshPoint
   {
     double x,y,z;
-    ngcomp::MeshAccess* mesh;
+    ngcomp::MeshAccess<meshtype>* mesh;
     VorB vb;
     int nr;
   };
