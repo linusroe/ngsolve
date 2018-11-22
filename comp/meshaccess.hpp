@@ -23,7 +23,7 @@ namespace ngcomp
 {
   using netgen::Ng_Node;
   
-  class MeshAccess;
+  template <typename meshtype> class MeshAccess;
   class Ngs_Element;
   
 
@@ -79,78 +79,80 @@ namespace ngcomp
     return ost;
   }
 
+  template <typename meshtype>
   class ElementIterator
   {
-    const MeshAccess & ma;
+    const MeshAccess<meshtype> & ma;
     ElementId ei;
   public:
-    ElementIterator (const MeshAccess & ama, ElementId aei) : ma(ama), ei(aei) { ; }
+    ElementIterator (const MeshAccess<meshtype> & ama, ElementId aei) : ma(ama), ei(aei) { ; }
     ElementIterator operator++ () { return ElementIterator(ma, ++ei); }
     INLINE Ngs_Element operator*() const;
     bool operator!=(ElementIterator id2) const { return ei != id2.ei; }
     bool operator==(ElementIterator id2) const { return ei == id2.ei; }
   };
 
+  template <typename meshtype>
   class ElementRange : public IntRange
   {
-    const MeshAccess & ma;
+    const MeshAccess<meshtype> & ma;
     VorB vb;
   public:
-    ElementRange (const MeshAccess & ama, VorB avb, IntRange ar) 
+    ElementRange (const MeshAccess<meshtype> & ama, VorB avb, IntRange ar) 
       : IntRange(ar), ma(ama), vb(avb) { ; } 
     ElementId First() const { return ElementId(vb, IntRange::First()); }
-    ElementIterator begin () const { return ElementIterator(ma, ElementId(vb,IntRange::First())); }
-    ElementIterator end () const { return ElementIterator(ma, ElementId(vb,IntRange::Next())); }
+    ElementIterator<meshtype> begin () const { return ElementIterator(ma, ElementId(vb,IntRange::First())); }
+    ElementIterator<meshtype> end () const { return ElementIterator(ma, ElementId(vb,IntRange::Next())); }
     ElementId operator[] (size_t nr) { return ElementId(vb, IntRange::First()+nr); }
     ElementRange Split(size_t nr, size_t tot) { return ElementRange(ma, vb, IntRange::Split(nr,tot)); }
   };
 
-  template <VorB VB>
+  template <typename meshtype, VorB VB>
   class TElementIterator
   {
-    const MeshAccess & ma;
+    const MeshAccess<meshtype> & ma;
     size_t nr;
   public:
-    INLINE TElementIterator (const MeshAccess & ama, size_t anr) : ma(ama), nr(anr) { ; }
+    INLINE TElementIterator (const MeshAccess<meshtype> & ama, size_t anr) : ma(ama), nr(anr) { ; }
     INLINE TElementIterator operator++ () { return TElementIterator(ma, ++nr); }
     // ElementId operator*() const { return ElementId(VB,nr); }
     INLINE Ngs_Element operator*() const; 
     INLINE bool operator!=(TElementIterator id2) const { return nr != id2.nr; }
   };
   
-  template <VorB VB>
+  template <typename meshtype, VorB VB>
   class TElementRange
   {
-    const MeshAccess & ma;
+    const MeshAccess<meshtype> & ma;
     IntRange r;
   public:
-    INLINE TElementRange (const MeshAccess & ama, IntRange ar) : ma(ama), r(ar) { ; }
-    INLINE TElementIterator<VB> begin () const { return TElementIterator<VB>(ma, r.First()); }
-    INLINE TElementIterator<VB> end () const { return TElementIterator<VB>(ma, r.Next()); }
+    INLINE TElementRange (const MeshAccess<meshtype> & ama, IntRange ar) : ma(ama), r(ar) { ; }
+    INLINE TElementIterator<meshtype, VB> begin () const { return TElementIterator<meshtype, VB>(ma, r.First()); }
+    INLINE TElementIterator<meshtype, VB> end () const { return TElementIterator<meshtype, VB>(ma, r.Next()); }
   };
 
-  template <VorB VB, int DIM>
+  template <typename meshtype, VorB VB, int DIM>
   class DimElementIterator
   {
-    const MeshAccess & ma;
+    const MeshAccess<meshtype> & ma;
     size_t nr;
   public:
-    INLINE DimElementIterator (const MeshAccess & ama, size_t anr) : ma(ama), nr(anr) { ; }
+    INLINE DimElementIterator (const MeshAccess<meshtype> & ama, size_t anr) : ma(ama), nr(anr) { ; }
     INLINE DimElementIterator operator++ () { return DimElementIterator(ma, ++nr); }
     // ElementId operator*() const { return ElementId(VB,nr); }
     INLINE Ngs_Element operator*() const; 
     INLINE bool operator!=(DimElementIterator id2) const { return nr != id2.nr; }
   };
   
-  template <VorB VB, int DIM>
+  template <typename meshtype, VorB VB, int DIM>
   class DimElementRange
   {
-    const MeshAccess & ma;
+    const MeshAccess<meshtype> & ma;
     IntRange r;
   public:
-    INLINE DimElementRange (const MeshAccess & ama, IntRange ar) : ma(ama), r(ar) { ; }
-    INLINE auto begin () const { return DimElementIterator<VB,DIM>(ma, r.First()); }
-    INLINE auto end () const { return DimElementIterator<VB,DIM>(ma, r.Next()); }
+    INLINE DimElementRange (const MeshAccess<meshtype> & ama, IntRange ar) : ma(ama), r(ar) { ; }
+    INLINE auto begin () const { return DimElementIterator<meshtype, VB, DIM>(ma, r.First()); }
+    INLINE auto end () const { return DimElementIterator<meshtype, VB, DIM>(ma, r.Next()); }
   };
 
   /*
@@ -191,9 +193,10 @@ namespace ngcomp
 
   class GridFunction;
 
+  template <typename meshtype>
   class NGS_DLL_HEADER MeshAccess : public BaseStatusHandler
   {
-    netgen::Ngx_Mesh mesh;
+    netgen::Ngx_Mesh<meshtype> mesh;
 
     /// buffered global quantities:
     /// dimension of the domain. Set to -1 if no mesh is present
@@ -247,7 +250,7 @@ namespace ngcomp
     MPI_Comm mesh_comm;
   public:
     /// connects to Netgen - mesh
-    MeshAccess (shared_ptr<netgen::Ngx_Mesh> amesh = NULL);
+    MeshAccess (shared_ptr<netgen::Ngx_Mesh<meshtype>> amesh = nullptr);
     /// loads mesh from file
     MeshAccess (string filename, MPI_Comm amesh_comm = ngs_comm)
       : MeshAccess()
@@ -318,21 +321,21 @@ namespace ngcomp
       return p;
     }
 
-    ElementRange Elements (VorB vb = VOL) const
+    ElementRange<meshtype> Elements (VorB vb = VOL) const
     {
-      return ElementRange (*this, vb, IntRange (0, GetNE(vb)));
+      return ElementRange<meshtype> (*this, vb, IntRange (0, GetNE(vb)));
     }
 
     template <VorB VB>
-      TElementRange<VB> Elements () const
+      TElementRange<meshtype, VB> Elements () const
     {
-      return TElementRange<VB> (*this, IntRange (0, GetNE(VB)));
+      return TElementRange<meshtype, VB> (*this, IntRange (0, GetNE(VB)));
     }
     
     template <VorB VB, int DIM>
       auto Elements () const
     {
-      return DimElementRange<VB,DIM> (*this, IntRange (0, GetNE(VB)));
+      return DimElementRange<meshtype, VB,DIM> (*this, IntRange (0, GetNE(VB)));
     }
 
     /*
@@ -777,7 +780,7 @@ namespace ngcomp
     /// returns vertex numbers of face
     auto GetFacePNums (size_t fnr) const
     {
-      return ArrayObject (mesh.GetNode<2> (fnr).vertices);
+      return ArrayObject (mesh.GetNode<2>(fnr).vertices);
     }
     /// returns vertex numbers of edge
     [[deprecated("Use GetEdgePNums(enr) instead!")]]                            
@@ -1140,29 +1143,31 @@ namespace ngcomp
   
 
 
-  INLINE Ngs_Element ElementIterator :: operator*() const { return ma[ei]; }
+  template <typename meshtype>
+  INLINE Ngs_Element ElementIterator<meshtype> :: operator*() const { return ma[ei]; }
   
-  template <VorB VB>
-  INLINE Ngs_Element TElementIterator<VB>::operator*() const 
+  template <typename meshtype, VorB VB>
+  INLINE Ngs_Element TElementIterator<meshtype, VB>::operator*() const 
   {
     return ma[ElementId(VB,nr)]; 
   }
 
-  template <VorB VB, int DIM>
-  INLINE Ngs_Element DimElementIterator<VB,DIM>::operator*() const 
+  template <typename meshtype, VorB VB, int DIM>
+  INLINE Ngs_Element DimElementIterator<meshtype, VB, DIM>::operator*() const 
   {
     return ma.GetElement(T_ElementId<VB,DIM>(nr));
   }
 
   
+  template <typename meshtype> 
   class Region
   {
-    shared_ptr<MeshAccess> mesh;
+    shared_ptr<MeshAccess<meshtype>> mesh;
     VorB vb;
     BitArray mask;
   public:
-    NGS_DLL_HEADER Region (const shared_ptr<MeshAccess> & amesh, VorB avb, string pattern);
-    NGS_DLL_HEADER Region (const shared_ptr<MeshAccess> & amesh, VorB avb, const BitArray & amask);
+    NGS_DLL_HEADER Region (const shared_ptr<MeshAccess<meshtype>> & amesh, VorB avb, string pattern);
+    NGS_DLL_HEADER Region (const shared_ptr<MeshAccess<meshtype>> & amesh, VorB avb, const BitArray & amask);
     Region (const Region &) = default;
     explicit operator VorB () const { return vb; }
     VorB VB() const { return vb; }
@@ -1199,9 +1204,10 @@ namespace ngcomp
      It controls the Netgen - progressbar as well as console progress update.
      In parallel, all processes must enter and call the Done method.
    */
+  template <typename meshtype>
   class ProgressOutput
   {
-    shared_ptr<MeshAccess> ma;
+    shared_ptr<MeshAccess<meshtype>> ma;
     string task;
     size_t total;
     double prevtime;
@@ -1214,7 +1220,7 @@ namespace ngcomp
     // static thread_local double thd_prev_time;
     static thread_local size_t thd_prev_time;
   public:
-    NGS_DLL_HEADER ProgressOutput (shared_ptr<MeshAccess> ama,
+    NGS_DLL_HEADER ProgressOutput (shared_ptr<MeshAccess<meshtype>> ama,
                                    string atask, size_t atotal);
     NGS_DLL_HEADER ~ProgressOutput();
 
@@ -1230,8 +1236,8 @@ namespace ngcomp
 
 
   /// old style, compatibility for a while
-  template <typename T>
-  void AllReduceNodalData (NODE_TYPE nt, Array<T> & data, MPI_Op op, const MeshAccess & ma)
+  template <typename meshtype, typename T>
+  void AllReduceNodalData (NODE_TYPE nt, Array<T> & data, MPI_Op op, const MeshAccess<meshtype> & ma)
   {
     ma.AllReduceNodalData (nt, data, op);
   }
@@ -1239,8 +1245,9 @@ namespace ngcomp
 
 #ifdef PARALLEL
 
+  template <typename meshtype> 
   template <typename T>
-  void MeshAccess::
+  void MeshAccess<meshtype>::
   AllReduceNodalData (NODE_TYPE nt, Array<T> & data, MPI_Op op) const
   {
     MPI_Comm comm = GetCommunicator();
@@ -1290,8 +1297,9 @@ namespace ngcomp
 
 #else
 
+  template <typename meshtype>
   template <typename T>
-  void MeshAccess::
+  void MeshAccess<meshtype>::
   AllReduceNodalData (NODE_TYPE nt, Array<T> & data, MPI_Op op) const { ; }
 
 #endif
