@@ -9,16 +9,17 @@
 
 namespace ngcomp
 {
-  class FESpace;
+  template <typename meshtype> class FESpace;
 }
 
 
 namespace ngfem
 {
 
+template <typename meshtype>
 class ProxyFunction : public CoefficientFunction
 {
-  shared_ptr<ngcomp::FESpace> fes;
+  shared_ptr<ngcomp::FESpace<meshtype>> fes;
   bool testfunction; // true .. test, false .. trial
   // bool is_complex;
   bool is_other;    // neighbour element (DG)
@@ -35,7 +36,7 @@ class ProxyFunction : public CoefficientFunction
   SymbolTable<shared_ptr<DifferentialOperator>> additional_diffops;
   // int dim;
 public:
-  NGS_DLL_HEADER ProxyFunction (shared_ptr<ngcomp::FESpace> afes,
+  NGS_DLL_HEADER ProxyFunction (shared_ptr<ngcomp::FESpace<meshtype>> afes,
                                 bool atestfunction, bool ais_complex,
                                 shared_ptr<DifferentialOperator> aevaluator, 
                                 shared_ptr<DifferentialOperator> aderiv_evaluator,
@@ -108,7 +109,7 @@ public:
     return shared_ptr<ProxyFunction>();
   }
 
-  const shared_ptr<ngcomp::FESpace> & GetFESpace() const { return fes; }
+  const shared_ptr<ngcomp::FESpace<meshtype>> & GetFESpace() const { return fes; }
   
   virtual double Evaluate (const BaseMappedIntegrationPoint & ip) const override
   {

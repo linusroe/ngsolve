@@ -69,7 +69,7 @@ ANY                  1 1 1 1 | 15
   NGS_DLL_HEADER ostream & operator<< (ostream & ost, COUPLING_TYPE ct);
 
 
-  class FESpace;
+  template <typename meshtype> class FESpace;
 
   // will be size_t some day 
   typedef int DofId;
@@ -88,6 +88,7 @@ ANY                  1 1 1 1 | 15
      Provides finite elements, global degrees of freedom, 
      and transformations of element-matrices and element-vectors
   */
+  template <typename meshtype>
   class NGS_DLL_HEADER FESpace : public NGS_Object
   {
   protected:
@@ -221,7 +222,7 @@ ANY                  1 1 1 1 | 15
        -complex:      complex space \\
        -dirichlet=<int-list>: dirichlet boundaries, 1-based \\
     */
-    FESpace (shared_ptr<MeshAccess> ama, const Flags & flags, 
+    FESpace (shared_ptr<MeshAccess<meshtype>> ama, const Flags & flags, 
              bool checkflags = false);
     /// cleanup
     virtual ~FESpace ();
@@ -835,10 +836,11 @@ ANY                  1 1 1 1 | 15
 
 
 
-  extern NGS_DLL_HEADER void IterateElements (const FESpace & fes,
+  template <typename meshtype>
+  extern NGS_DLL_HEADER void IterateElements (const FESpace<meshtype> & fes,
 			       VorB vb, 
 			       LocalHeap & clh, 
-			       const function<void(FESpace::Element,LocalHeap&)> & func);
+			       const function<void(FESpace<meshtype>::Element,LocalHeap&)> & func);
   /*
   template <typename TFUNC>
   inline void IterateElements (const FESpace & fes, 
@@ -930,6 +932,7 @@ ANY                  1 1 1 1 | 15
      A space of continuous finite elements.
      Supports first and second order finite elements.
   */
+  template <typename meshtype>
   class NGS_DLL_HEADER NodalFESpace : public FESpace
   {
     ///
@@ -939,7 +942,7 @@ ANY                  1 1 1 1 | 15
   public:
 
     ///
-    NodalFESpace (shared_ptr<MeshAccess> ama, const Flags & flags, bool parseflags=false);
+    NodalFESpace (shared_ptr<MeshAccess<meshtype>> ama, const Flags & flags, bool parseflags=false);
     ///
     virtual ~NodalFESpace ();
 
@@ -978,13 +981,14 @@ ANY                  1 1 1 1 | 15
 
 
   ///
+  template <typename meshtype>
   class NGS_DLL_HEADER NonconformingFESpace : public FESpace
   {
     ///
     Array<int> ndlevel;
 
   public:
-    NonconformingFESpace (shared_ptr<MeshAccess> ama, const Flags & flags, bool parseflags=false);
+    NonconformingFESpace (shared_ptr<MeshAccess<meshtype>> ama, const Flags & flags, bool parseflags=false);
     virtual ~NonconformingFESpace ();
 
     virtual string GetClassName () const override
@@ -1007,6 +1011,7 @@ ANY                  1 1 1 1 | 15
 
 
   ///
+  template <typename meshtype>
   class NGS_DLL_HEADER ElementFESpace : public FESpace
   {
     ///  Array<int> startelement;
@@ -1014,7 +1019,7 @@ ANY                  1 1 1 1 | 15
     int n_el_dofs;
   public:
     ///
-    ElementFESpace (shared_ptr<MeshAccess> ama, const Flags& flags, bool parseflags=false);
+    ElementFESpace (shared_ptr<MeshAccess<meshtype>> ama, const Flags& flags, bool parseflags=false);
 
     ///
     ~ElementFESpace ();
@@ -1055,6 +1060,7 @@ ANY                  1 1 1 1 | 15
 
 
   /// Non-continous fe space on boundary
+  template <typename meshtype>
   class NGS_DLL_HEADER SurfaceElementFESpace : public FESpace
   {
     ///
@@ -1062,7 +1068,7 @@ ANY                  1 1 1 1 | 15
     int n_el_dofs;
   public:
     ///
-    SurfaceElementFESpace (shared_ptr<MeshAccess> ama, const Flags& flags, 
+    SurfaceElementFESpace (shared_ptr<MeshAccess<meshtype>> ama, const Flags& flags, 
                            bool checkflags = false);
 
     ///
@@ -1096,6 +1102,7 @@ ANY                  1 1 1 1 | 15
 
 
   /// A combination of fe-spaces
+  template <typename meshtype>
   class NGS_DLL_HEADER CompoundFESpace : public FESpace
   {
   protected:
@@ -1109,11 +1116,11 @@ ANY                  1 1 1 1 | 15
   public:
     /// generates a compound space.
     /// components will be added later
-    CompoundFESpace (shared_ptr<MeshAccess> ama,
+    CompoundFESpace (shared_ptr<MeshAccess<meshtype>> ama,
 		     const Flags & flags, bool parseflags = false);
     /// generates a compound space 
     /// components are provided in aspaces
-    CompoundFESpace (shared_ptr<MeshAccess> ama,
+    CompoundFESpace (shared_ptr<MeshAccess<meshtype>> ama,
 		     const Array<shared_ptr<FESpace>> & aspaces,
 		     const Flags & flags, bool parseflags = false);
 
@@ -1197,6 +1204,7 @@ ANY                  1 1 1 1 | 15
 
 
   /// Registered FESpace classes
+  template <typename meshtype>
   class NGS_DLL_HEADER FESpaceClasses
   {
   public:
@@ -1207,12 +1215,12 @@ ANY                  1 1 1 1 | 15
       /// the name
       string name;
       /// function pointer to creator function
-      shared_ptr<FESpace> (*creator)(shared_ptr<MeshAccess> ma, const Flags & flags);
+      shared_ptr<FESpace> (*creator)(shared_ptr<MeshAccess<meshtype>> ma, const Flags & flags);
       /// function pointer to docu function
       DocInfo (*getdocu)();
       /// creates a descriptor
       FESpaceInfo (const string & aname,
-		   shared_ptr<FESpace> (*acreator)(shared_ptr<MeshAccess> ma, const Flags & flags),
+		   shared_ptr<FESpace> (*acreator)(shared_ptr<MeshAccess<meshtype>> ma, const Flags & flags),
                    DocInfo (*agetdocu)())
 	: name(aname), creator(acreator), getdocu(agetdocu) {;}
     };
@@ -1227,7 +1235,7 @@ ANY                  1 1 1 1 | 15
 
     /// add a descriptor
     void AddFESpace (const string & aname, 
-		     shared_ptr<FESpace> (*acreator)(shared_ptr<MeshAccess> ma, const Flags & flags),
+		     shared_ptr<FESpace> (*acreator)(shared_ptr<MeshAccess<meshtype>> ma, const Flags & flags),
                      DocInfo (*getdocu)() = FESpace::GetDocu);
   
     /// returns all creators
@@ -1241,11 +1249,12 @@ ANY                  1 1 1 1 | 15
   };
  
   /// returns createion object
+  template <typename meshtype>
   extern NGS_DLL_HEADER FESpaceClasses & GetFESpaceClasses ();
 
   /// creates a fespace of that type
   extern NGS_DLL_HEADER shared_ptr<FESpace> CreateFESpace (const string & type,
-                                                           shared_ptr<MeshAccess> ma,
+                                                           shared_ptr<MeshAccess<meshtype>> ma,
                                                            const Flags & flags);
 
 
@@ -1253,7 +1262,7 @@ ANY                  1 1 1 1 | 15
      template for registration of finite element spaces.
      provides static Create - function
    */
-  template <typename FES>
+  template <typename meshtype, typename FES>
   class RegisterFESpace
   {
   public:
@@ -1265,7 +1274,7 @@ ANY                  1 1 1 1 | 15
     }
     
     /// creates an fespace of type FES
-    static shared_ptr<FESpace> Create (shared_ptr<MeshAccess> ma, const Flags & flags)
+    static shared_ptr<FESpace> Create (shared_ptr<MeshAccess<meshtype>> ma, const Flags & flags)
     {
       return make_shared<FES> (ma, flags);
     }
@@ -1302,10 +1311,11 @@ ANY                  1 1 1 1 | 15
 #else
 
 
+  template <typename meshtype>
   class ParallelMeshDofs : public ParallelDofs 
   {
   public:
-    ParallelMeshDofs (shared_ptr<MeshAccess> ama, const Array<NodeId> & adofnodes, 
+    ParallelMeshDofs (shared_ptr<MeshAccess<meshtype>> ama, const Array<NodeId> & adofnodes, 
 		      int dim = 1, bool iscomplex = false)
     { ndof = adofnodes.Size(); }
   };

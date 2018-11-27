@@ -30,6 +30,7 @@ namespace ngcomp
   /** 
       NGSolve base class
   */
+  template <typename meshtype>
   class NGS_DLL_HEADER NGS_Object : public enable_shared_from_this_virtual<NGS_Object>
   {
   protected:
@@ -43,7 +44,7 @@ namespace ngcomp
     Flags flags;
 
     /// access to the mesh
-    shared_ptr<MeshAccess> ma;
+    shared_ptr<MeshAccess<meshtype>> ma;
 
     /// profiling
     Timer timer;
