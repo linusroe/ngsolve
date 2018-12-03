@@ -193,7 +193,7 @@ namespace ngcomp
 
   class NGS_DLL_HEADER MeshAccess : public BaseStatusHandler
   {
-    netgen::Ngx_Mesh mesh;
+    std::unique_ptr<netgen::Ngx_Mesh> mesh;
 
     /// buffered global quantities:
     /// dimension of the domain. Set to -1 if no mesh is present
@@ -687,7 +687,16 @@ namespace ngcomp
     template <int DIM>
     netgen::Ng_Node<DIM> GetNode (size_t nr) const
     {
-      return mesh.GetNode<DIM> (nr);
+      switch(DIM)
+      {
+      case 0 : return mesh.GetNode0 (nr);
+      break;
+      case 1 : return mesh.GetNode1 (nr);
+      break;
+      case 2 : return mesh.GetNode2 (nr);
+      break;
+      }
+      
     }
 
     /// returns the points of an element.
