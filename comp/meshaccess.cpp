@@ -103,19 +103,19 @@ namespace ngcomp
     virtual void CalcJacobian (const IntegrationPoint & ip,
 			       FlatMatrix<> dxdxi) const override
     {
-      mesh->mesh.ElementTransformation <DIMS,DIMR> (elnr, &ip(0), NULL, &dxdxi(0));
+      mesh->mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), NULL, &dxdxi(0));
     }
     
     virtual void CalcPoint (const IntegrationPoint & ip,
 			    FlatVector<> point) const override
     {
-      mesh->mesh.ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), NULL);
+      mesh->mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), NULL);
     }
 
     virtual void CalcPointJacobian (const IntegrationPoint & ip,
 				    FlatVector<> point, FlatMatrix<> dxdxi) const override
     {
-      mesh->mesh.ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), &dxdxi(0));
+      mesh->mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), &dxdxi(0));
     }
 
     virtual BaseMappedIntegrationPoint & operator() (const IntegrationPoint & ip, Allocator & lh) const override
@@ -146,7 +146,7 @@ namespace ngcomp
       MappedIntegrationRule<DIMS,DIMR> & mir = 
 	static_cast<MappedIntegrationRule<DIMS,DIMR> &> (bmir);
       
-      mesh->mesh.MultiElementTransformation <DIMS,DIMR>
+      mesh->mesh->MultiElementTransformation <DIMS,DIMR>
         (elnr, ir.Size(),
          &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
          &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
@@ -172,7 +172,7 @@ namespace ngcomp
       SIMD_MappedIntegrationRule<DIMS,DIMR> & mir = 
 	static_cast<SIMD_MappedIntegrationRule<DIMS,DIMR> &> (bmir);
       
-      mesh->mesh.MultiElementTransformation <DIMS,DIMR>
+      mesh->mesh->MultiElementTransformation <DIMS,DIMR>
         (elnr, ir.Size(),
          &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
          &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
@@ -276,7 +276,7 @@ namespace ngcomp
     {
       CalcJacobian (ip, dxdxi);
       CalcPoint (ip, point);
-      // this->mesh->mesh.ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), &dxdxi(0));
+      // this->mesh->mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), &dxdxi(0));
     }
 
     virtual void CalcMultiPointJacobian (const IntegrationRule & ir,
@@ -300,7 +300,7 @@ namespace ngcomp
       /*
       MappedIntegrationRule<DIMS,DIMR> & mir = 
 	static_cast<MappedIntegrationRule<DIMS,DIMR> &> (bmir);
-      mesh->mesh.MultiElementTransformation <DIMS,DIMR> (elnr, ir.Size(),
+      mesh->mesh->MultiElementTransformation <DIMS,DIMR> (elnr, ir.Size(),
                                                          &ir[0](0), &ir[1](0)-&ir[0](0),
                                                          &mir[0].Point()(0), 
                                                          &mir[1].Point()(0)-&mir[0].Point()(0), 
@@ -465,10 +465,10 @@ namespace ngcomp
         {
           Ngs_Element nel = mesh -> GetElement<DIMS,VOL> (elnr);
           // p0 = FlatVec<3> (point0[point_delta*nel.Vertices()[0]]);
-          p0 = FlatVec<3, const double> (mesh->mesh.GetPoint (nel.Vertices()[3]));
+          p0 = FlatVec<3, const double> (mesh->mesh->GetPoint (nel.Vertices()[3]));
 	  for (int j = 0; j < 3; j++)
 	    {
-	      Vec<3> pj = FlatVec<3, const double>(mesh->mesh.GetPoint(nel.Vertices()[j])) - p0;
+	      Vec<3> pj = FlatVec<3, const double>(mesh->mesh->GetPoint(nel.Vertices()[j])) - p0;
 	      for (int k = 0; k < 3; k++)
 		mat(k,j) = pj(k);
 	    }
@@ -477,11 +477,11 @@ namespace ngcomp
       else if ( (DIMR==2) && (DIMS==2) && (eltype == ET_TRIG) )
         {
           Ngs_Element nel = mesh -> GetElement<DIMS,VOL> (elnr);
-          Vec<2> hp0 = FlatVec<2, const double> (mesh->mesh.GetPoint (nel.Vertices()[2]));
+          Vec<2> hp0 = FlatVec<2, const double> (mesh->mesh->GetPoint (nel.Vertices()[2]));
           p0 = hp0;
 	  for (int j = 0; j < 2; j++)
 	    {
-	      Vec<2> pj = FlatVec<2, const double>(mesh->mesh.GetPoint(nel.Vertices()[j])) - hp0;
+	      Vec<2> pj = FlatVec<2, const double>(mesh->mesh->GetPoint(nel.Vertices()[j])) - hp0;
 	      for (int k = 0; k < 2; k++)
 		mat(k,j) = pj(k);
 	    }
@@ -490,10 +490,10 @@ namespace ngcomp
       else if ( (DIMR==2) && (DIMS==1) && (eltype == ET_SEGM) )
         {
           Ngs_Element nel = mesh -> GetElement<DIMS,VOL> (elnr);
-          p0 = FlatVec<2, const double> (mesh->mesh.GetPoint (nel.Vertices()[1]));
+          p0 = FlatVec<2, const double> (mesh->mesh->GetPoint (nel.Vertices()[1]));
 	  for (int j = 0; j < 1; j++)
 	    {
-	      Vec<2> pj = FlatVec<2, const double>(mesh->mesh.GetPoint(nel.Vertices()[j])) - p0;
+	      Vec<2> pj = FlatVec<2, const double>(mesh->mesh->GetPoint(nel.Vertices()[j])) - p0;
 	      for (int k = 0; k < 2; k++)
 		mat(k,j) = pj(k);
 	    }
@@ -505,10 +505,10 @@ namespace ngcomp
       else if ( (DIMR==1) && (DIMS==1) && (eltype == ET_SEGM) )
         {
           Ngs_Element nel = mesh -> GetElement<DIMS,VOL> (elnr);
-          p0 = FlatVec<1, const double> (mesh->mesh.GetPoint (nel.Vertices()[1]));
+          p0 = FlatVec<1, const double> (mesh->mesh->GetPoint (nel.Vertices()[1]));
 	  for (int j = 0; j < 1; j++)
 	    {
-	      Vec<1> pj = FlatVec<1, const double>(mesh->mesh.GetPoint(nel.Vertices()[j])) - p0;
+	      Vec<1> pj = FlatVec<1, const double>(mesh->mesh->GetPoint(nel.Vertices()[j])) - p0;
 	      for (int k = 0; k < 1; k++)
 		mat(k,j) = pj(k);
 	    }
@@ -517,7 +517,7 @@ namespace ngcomp
       else
         {
           Vec<DIMS> pref = 0.0;
-          mesh->mesh.ElementTransformation <DIMS,DIMR> (elnr, &pref(0), &p0(0), &mat(0));
+          mesh->mesh->ElementTransformation <DIMS,DIMR> (elnr, &pref(0), &p0(0), &mat(0));
         }
     }
 
@@ -532,10 +532,10 @@ namespace ngcomp
         {
           Ngs_Element nel = mesh -> GetElement<DIMS,VOL> (elnr);
           // p0 = FlatVec<3> (point0[point_delta*nel.Vertices()[0]]);
-          p0 = FlatVec<3, const double> (mesh->mesh.GetPoint (nel.Vertices()[3]));
+          p0 = FlatVec<3, const double> (mesh->mesh->GetPoint (nel.Vertices()[3]));
 	  for (int j = 0; j < 3; j++)
 	    {
-	      Vec<3> pj = FlatVec<3, const double>(mesh->mesh.GetPoint(nel.Vertices()[j])) - p0;
+	      Vec<3> pj = FlatVec<3, const double>(mesh->mesh->GetPoint(nel.Vertices()[j])) - p0;
 	      for (int k = 0; k < 3; k++)
 		mat(k,j) = pj(k);
 	    }
@@ -547,10 +547,10 @@ namespace ngcomp
       else if ( (DIMR==2) && (DIMS==2) && (eltype == ET_TRIG) )
         {
           Ngs_Element nel = mesh -> GetElement<DIMS,VOL> (elnr);
-          p0 = FlatVec<2, const double> (mesh->mesh.GetPoint (nel.Vertices()[2]));
+          p0 = FlatVec<2, const double> (mesh->mesh->GetPoint (nel.Vertices()[2]));
 	  for (int j = 0; j < 2; j++)
 	    {
-	      Vec<2> pj = FlatVec<2, const double>(mesh->mesh.GetPoint(nel.Vertices()[j])) - p0;
+	      Vec<2> pj = FlatVec<2, const double>(mesh->mesh->GetPoint(nel.Vertices()[j])) - p0;
 	      for (int k = 0; k < 2; k++)
 		mat(k,j) = pj(k);
 	    }
@@ -563,7 +563,7 @@ namespace ngcomp
       else
         {
           Vec<DIMS> pref = 0.0;
-          mesh->mesh.ElementTransformation <DIMS,DIMR> (elnr, &pref(0), &p0(0), &mat(0));
+          mesh->mesh->ElementTransformation <DIMS,DIMR> (elnr, &pref(0), &p0(0), &mat(0));
         }
     }
     */
@@ -736,8 +736,8 @@ namespace ngcomp
     mesh_comm = MPI_COMM_WORLD;
     ngs_comm =  MPI_COMM_WORLD;
 #endif
-    mesh.SelectMesh();
-    mesh.UpdateTopology();  // for netgen/ngsolve stand alone
+    mesh->SelectMesh();
+    mesh->UpdateTopology();  // for netgen/ngsolve stand alone
     UpdateBuffers();
   }
 
@@ -752,33 +752,33 @@ namespace ngcomp
   void MeshAccess :: LoadMesh (const string & filename)
   {
     static Timer t("MeshAccess::LoadMesh"); RegionTimer reg(t);
-    mesh.LoadMesh (filename);
+    mesh->LoadMesh (filename);
     UpdateBuffers();
-    if (!mesh.Valid())
+    if (!mesh->Valid())
       throw Exception ("could not load mesh from '" + filename + "'");
   }
 
   void MeshAccess :: LoadMesh (istream & str)
   {
     static Timer t("MeshAccess::LoadMesh"); RegionTimer reg(t);    
-    mesh.LoadMesh (str);
+    mesh->LoadMesh (str);
     UpdateBuffers();
   }
 
   void MeshAccess :: SaveMesh (ostream & str) const
   {
-    mesh.SaveMesh (str);
+    mesh->SaveMesh (str);
   }
 
   void MeshAccess :: ArchiveMesh (Archive & archive) 
   {
-    mesh.DoArchive (archive);
+    mesh->DoArchive (archive);
     if (archive.Input()) UpdateBuffers();
   }
 
   void MeshAccess :: SelectMesh() const
   {
-    mesh.SelectMesh();
+    mesh->SelectMesh();
   }
 
 
@@ -819,7 +819,7 @@ namespace ngcomp
     RegionTimer reg(t);
 
     
-    if (!mesh.Valid())
+    if (!mesh->Valid())
       {
         for (int i = 0; i < 4; i++)  
           {
@@ -834,7 +834,7 @@ namespace ngcomp
         return;
       }
 
-    auto netgen_mesh_timestamp = mesh.GetTimeStamp();
+    auto netgen_mesh_timestamp = mesh->GetTimeStamp();
     // cout << "netgen_mesh_timestamp = " << netgen_mesh_timestamp << ", mytime = " << mesh_timestamp << endl;
     if (netgen_mesh_timestamp == mesh_timestamp) return;
     mesh_timestamp = netgen_mesh_timestamp;
@@ -842,8 +842,8 @@ namespace ngcomp
     timestamp = NGS_Object::GetNextTimeStamp();
     
 
-    dim = mesh.GetDimension();
-    nlevels = mesh.GetNLevels(); 
+    dim = mesh->GetDimension();
+    nlevels = mesh->GetNLevels(); 
 
     if (MyMPI_GetNTasks() > 1 && MyMPI_GetId() == 0)
       {
@@ -859,8 +859,8 @@ namespace ngcomp
       {
 	for (int i = 0; i < 4; i++)  
 	  {
-	    nnodes[i] = mesh.GetNNodes(i);
-	    nelements[i] = mesh.GetNElements(i);
+	    nnodes[i] = mesh->GetNNodes(i);
+	    nelements[i] = mesh->GetNElements(i);
 	  }
 	for (int i = 0; i < 4; i++)  
 	  {
@@ -924,7 +924,7 @@ namespace ngcomp
 
 
     int & nbboundaries = nregions[BBND];
-    if(mesh.GetDimension() == 1)
+    if(mesh->GetDimension() == 1)
       {
         nbboundaries = 0;
       }
@@ -947,7 +947,7 @@ namespace ngcomp
       }
 
     int & nbbboundaries = nregions[BBBND];
-    if(mesh.GetDimension() == 1 || mesh.GetDimension() == 2)
+    if(mesh->GetDimension() == 1 || mesh->GetDimension() == 2)
       {
         nbbboundaries = 0;
       }
@@ -965,7 +965,7 @@ namespace ngcomp
       }
     
     // update periodic mappings
-    auto nid = mesh.GetNIdentifications();
+    auto nid = mesh->GetNIdentifications();
     periodic_node_pairs[NT_VERTEX]->SetSize(0);
     periodic_node_pairs[NT_EDGE]->SetSize(0);
     periodic_node_pairs[NT_FACE]->SetSize(0);
@@ -977,8 +977,8 @@ namespace ngcomp
     for (auto idnr : Range(nid))
       {
         // only if it is periodic
-        if (mesh.GetIdentificationType(idnr)!=2) continue;
-        auto pv_buffer = mesh.GetPeriodicVertices(idnr);
+        if (mesh->GetIdentificationType(idnr)!=2) continue;
+        auto pv_buffer = mesh->GetPeriodicVertices(idnr);
         auto pidnr = periodic_node_pairs[NT_VERTEX]->Append(Array<INT<2,int>>(pv_buffer.Size(), (INT<2,int>*) pv_buffer.Release(), true))-1;
 
         // build vertex map for idnr
@@ -1093,7 +1093,7 @@ namespace ngcomp
     // static Timer t("getedgeelements"); RegionTimer reg(t);    
     elnums.SetSize0();
 
-    auto vts = mesh.GetNode<1>(enr).vertices;
+    auto vts = mesh->GetNode<1>(enr).vertices;
     auto velems0 = GetVertexElements(vts[0]);
     auto velems1 = GetVertexElements(vts[1]);
     
@@ -1166,7 +1166,7 @@ namespace ngcomp
 
   void MeshAccess :: GetFacePNums (int fnr, Array<int> & pnums) const
   {
-    pnums = ArrayObject (mesh.GetNode<2> (fnr).vertices);
+    pnums = ArrayObject (mesh->GetNode<2> (fnr).vertices);
   }
 
  
@@ -1184,11 +1184,11 @@ namespace ngcomp
     if (dim == 3)
       {
         elnums.SetSize0();
-        auto vnums = ArrayObject(mesh.GetNode<2> (fnr).vertices);
-        auto vels = ArrayObject(mesh.GetNode<0> (vnums[0]).elements);
+        auto vnums = ArrayObject(mesh->GetNode<2> (fnr).vertices);
+        auto vels = ArrayObject(mesh->GetNode<0> (vnums[0]).elements);
         for (auto el : vels)
           {
-            for (int f : ArrayObject(mesh.GetElement<3>(el).faces))
+            for (int f : ArrayObject(mesh->GetElement<3>(el).faces))
               if (f == fnr)
                 elnums.Append (el);
           }
@@ -1245,7 +1245,7 @@ namespace ngcomp
   void MeshAccess :: GetEdgePNums (int enr, Array<int> & pnums) const
   {
     pnums.SetSize(2);
-    auto edge = mesh.GetNode<1>(enr);
+    auto edge = mesh->GetNode<1>(enr);
     pnums[0] = edge.vertices[0];
     pnums[1] = edge.vertices[1];
   }
@@ -1273,7 +1273,7 @@ namespace ngcomp
 	GetFacePNums(fnr, pnums);
 	return (pnums.Size() == 3) ? ET_TRIG : ET_QUAD;
         */
-        return (mesh.GetNode<2>(fnr).vertices.Size() == 3) ? ET_TRIG : ET_QUAD;
+        return (mesh->GetNode<2>(fnr).vertices.Size() == 3) ? ET_TRIG : ET_QUAD;
       }
   }
 
@@ -1287,7 +1287,7 @@ namespace ngcomp
     // for periodic identification by now
     for(auto id : Range(GetNPeriodicIdentifications()))
       {
-        auto dim  = mesh.GetDimension();
+        auto dim  = mesh->GetDimension();
 	const auto& pairs = GetPeriodicNodes(dim == 3 ? NT_FACE : (dim == 2 ? NT_EDGE : NT_VERTEX),id);
 
 	for(const auto& pair : pairs)
@@ -1330,7 +1330,7 @@ namespace ngcomp
   
   void MeshAccess :: GetVertexElements (size_t vnr, Array<int> & elnrs) const
   {
-    elnrs = ArrayObject(mesh.GetNode<0> (vnr).elements);
+    elnrs = ArrayObject(mesh->GetNode<0> (vnr).elements);
     /*
     int nel = Ng_GetNVertexElements (vnr+1);
     elnrs.SetSize (nel);
@@ -1381,7 +1381,7 @@ namespace ngcomp
     ElementTransformation * eltrans;
     GridFunction * loc_deformation = deformation.get();
     
-    Ngs_Element el (mesh.GetElement<DIM> (elnr), ElementId(VOL, elnr));
+    Ngs_Element el (mesh->GetElement<DIM> (elnr), ElementId(VOL, elnr));
     
     if (pml_trafos[el.GetIndex()])
       {
@@ -1443,7 +1443,7 @@ namespace ngcomp
 
     ElementTransformation * eltrans;
     
-    Ngs_Element el(mesh.GetElement<DIM-1> (elnr), ElementId(BND, elnr));
+    Ngs_Element el(mesh->GetElement<DIM-1> (elnr), ElementId(BND, elnr));
     GridFunction * loc_deformation = deformation.get();
     
     if (loc_deformation)
@@ -1482,7 +1482,7 @@ namespace ngcomp
   GetCD2TrafoDim (size_t elnr, Allocator & lh) const
   {
     ElementTransformation * eltrans;
-    Ngs_Element el(mesh.GetElement<DIM-2>(elnr), ElementId(BBND,elnr));
+    Ngs_Element el(mesh->GetElement<DIM-2>(elnr), ElementId(BBND,elnr));
     GridFunction * loc_deformation = deformation.get();
     if(loc_deformation)
       eltrans = new (lh) ALE_ElementTransformation<DIM-2,DIM, Ng_ElementTransformation<DIM-2,DIM>>
@@ -1557,7 +1557,7 @@ namespace ngcomp
       case BBBND: default:
         {
           ElementTransformation * eltrans;
-          Ngs_Element el(mesh.GetElement<0>(elnr), ElementId(BBBND,elnr));
+          Ngs_Element el(mesh->GetElement<0>(elnr), ElementId(BBBND,elnr));
           GridFunction * loc_deformation = deformation.get();
           if(loc_deformation)
             eltrans = new (lh) ALE_ElementTransformation<0,3, Ng_ElementTransformation<0,3>>
@@ -1718,13 +1718,13 @@ namespace ngcomp
         switch (dim)
           {
           case 1:
-            return mesh.FindElementOfPoint<1> (&point(0), &ip(0), build_searchtree, 
+            return mesh->FindElementOfPoint<1> (&point(0), &ip(0), build_searchtree, 
                                                &(*indices)[0],indices->Size());
           case 2:
-            return mesh.FindElementOfPoint<2> (&point(0), &ip(0), build_searchtree, 
+            return mesh->FindElementOfPoint<2> (&point(0), &ip(0), build_searchtree, 
                                                &(*indices)[0],indices->Size());
           case 3:
-            return mesh.FindElementOfPoint<3> (&point(0), &ip(0), build_searchtree,
+            return mesh->FindElementOfPoint<3> (&point(0), &ip(0), build_searchtree,
                                                &(*indices)[0],indices->Size());
           }
       }
@@ -1732,9 +1732,9 @@ namespace ngcomp
       {  
         switch (dim)
           {
-          case 1: return mesh.FindElementOfPoint<1> (&point(0), &ip(0), build_searchtree, NULL, 0);
-          case 2: return mesh.FindElementOfPoint<2> (&point(0), &ip(0), build_searchtree, NULL, 0);
-          case 3: return mesh.FindElementOfPoint<3> (&point(0), &ip(0), build_searchtree, NULL, 0);
+          case 1: return mesh->FindElementOfPoint<1> (&point(0), &ip(0), build_searchtree, NULL, 0);
+          case 2: return mesh->FindElementOfPoint<2> (&point(0), &ip(0), build_searchtree, NULL, 0);
+          case 3: return mesh->FindElementOfPoint<3> (&point(0), &ip(0), build_searchtree, NULL, 0);
           }
       }
 
@@ -1767,13 +1767,13 @@ namespace ngcomp
 	// for(int i=0; i<indices->Size(); i++) dummy[i] = (*indices)[i]+1;
 	// elnr = Ng_FindSurfaceElementOfPoint (&point(0), lami, build_searchtree,dummy,indices->Size());
 	// delete [] dummy;
-        elnr = mesh.FindElementOfPoint<2> (&point(0), &ip(0), build_searchtree,
+        elnr = mesh->FindElementOfPoint<2> (&point(0), &ip(0), build_searchtree,
                                            &(*indices)[0],indices->Size());
       }
     else
       {  
 	// elnr = Ng_FindSurfaceElementOfPoint (&point(0), lami, build_searchtree);
-        elnr = mesh.FindElementOfPoint<2> (&point(0), &ip(0), build_searchtree, NULL, 0);        
+        elnr = mesh->FindElementOfPoint<2> (&point(0), &ip(0), build_searchtree, NULL, 0);        
       }
 
     return elnr;
@@ -1812,13 +1812,13 @@ namespace ngcomp
   {
     static Timer t("MeshAccess::Refine"); RegionTimer reg(t);
     nlevels = std::numeric_limits<int>::max();
-    mesh.Refine(NG_REFINE_H, &NGSolveTaskManager, &NGSolveTracer);
+    mesh->Refine(NG_REFINE_H, &NGSolveTaskManager, &NGSolveTracer);
     UpdateBuffers();
   }
 
   void MeshAccess :: Curve (int order)
   {
-    mesh.Curve(order);
+    mesh->Curve(order);
   } 
   
   int MeshAccess :: GetNPairsPeriodicVertices () const 
