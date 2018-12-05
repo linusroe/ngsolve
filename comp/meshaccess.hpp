@@ -452,10 +452,10 @@ namespace ngcomp
     {
       switch (vb)
         {
-        case VOL:   return mesh->GetMaterialCD<0> (region_nr);
-        case BND:   return mesh->GetMaterialCD<1> (region_nr);
-        case BBND:  return mesh->GetMaterialCD<2> (region_nr);
-        case BBBND: return mesh->GetMaterialCD<3> (region_nr);
+        case VOL:   return mesh->GetMaterialCD0 (region_nr);
+        case BND:   return mesh->GetMaterialCD1 (region_nr);
+        case BBND:  return mesh->GetMaterialCD2 (region_nr);
+        case BBBND: return mesh->GetMaterialCD3 (region_nr);
         default:    throw Exception("GetMaterial not implemented for " + ToString(vb));
         }
     }
@@ -546,14 +546,14 @@ namespace ngcomp
     {
       switch (dim-boundary)
 	{
-        case 0:	return Ngs_Element (mesh->GetElement<0> (elnr), 
+        case 0:	return Ngs_Element (mesh->GetElement0 (elnr), 
                                     ElementId(boundary ? BND : VOL, elnr));
-	case 1:	return Ngs_Element (mesh->GetElement<1> (elnr), 
+	case 1:	return Ngs_Element (mesh->GetElement1 (elnr), 
                                     ElementId(boundary ? BND : VOL, elnr));
-	case 2: return Ngs_Element (mesh->GetElement<2> (elnr), 
+	case 2: return Ngs_Element (mesh->GetElement2 (elnr), 
                                     ElementId(boundary ? BND : VOL, elnr));
 	case 3:
-        default: return Ngs_Element (mesh->GetElement<3> (elnr), 
+        default: return Ngs_Element (mesh->GetElement3 (elnr), 
                                      ElementId(boundary ? BND : VOL, elnr));
 	}
     }
@@ -563,11 +563,11 @@ namespace ngcomp
       int hdim = dim - int(ei.VB());
       switch (hdim)
 	{
-        case 0:	return Ngs_Element (mesh->GetElement<0> (ei.Nr()), ei);
-	case 1:	return Ngs_Element (mesh->GetElement<1> (ei.Nr()), ei);
-	case 2: return Ngs_Element (mesh->GetElement<2> (ei.Nr()), ei);
+        case 0:	return Ngs_Element (mesh->GetElement0 (ei.Nr()), ei);
+	case 1:	return Ngs_Element (mesh->GetElement1 (ei.Nr()), ei);
+	case 2: return Ngs_Element (mesh->GetElement2 (ei.Nr()), ei);
 	case 3:
-        default: return Ngs_Element (mesh->GetElement<3> (ei.Nr()), ei);
+        default: return Ngs_Element (mesh->GetElement3 (ei.Nr()), ei);
 	}
     }
 
@@ -575,7 +575,13 @@ namespace ngcomp
       INLINE Ngs_Element GetElement (T_ElementId<VB,DIM> ei) const
     {
       constexpr int HDIM = DIM - int(VB);
-      return Ngs_Element (mesh->GetElement<HDIM> (ei.Nr()), ei);
+      switch (HDIM)
+      {
+      case 0: return Ngs_Element (mesh->GetElement0 (ei.Nr()), ei);
+      case 1: return Ngs_Element (mesh->GetElement1 (ei.Nr()), ei);
+      case 2: return Ngs_Element (mesh->GetElement2 (ei.Nr()), ei);
+      case 3: return Ngs_Element (mesh->GetElement3 (ei.Nr()), ei);
+      }
     }
 
     
@@ -596,10 +602,10 @@ namespace ngcomp
     {
       switch (dim)
 	{
-	case 1:	return Ngs_Element (mesh->GetElement<0> (elnr), ElementId(BND,elnr));
-	case 2: return Ngs_Element (mesh->GetElement<1> (elnr), ElementId(BND,elnr));
+	case 1:	return Ngs_Element (mesh->GetElement0 (elnr), ElementId(BND,elnr));
+	case 2: return Ngs_Element (mesh->GetElement1 (elnr), ElementId(BND,elnr));
 	case 3: 
-        default: return Ngs_Element (mesh->GetElement<2> (elnr), ElementId(BND,elnr));
+        default: return Ngs_Element (mesh->GetElement2 (elnr), ElementId(BND,elnr));
 	}
     }
     
@@ -609,9 +615,9 @@ namespace ngcomp
       switch(dim)
 	{
 	case 1: throw Exception("No CoDim 2 Element for dimension 1");
-	case 2: return Ngs_Element(mesh->GetElement<0>(elnr),ElementId(BBND,elnr));
+	case 2: return Ngs_Element(mesh->GetElement0(elnr),ElementId(BBND,elnr));
 	case 3:
-	default: return Ngs_Element(mesh->GetElement<1>(elnr),ElementId(BBND,elnr));
+	default: return Ngs_Element(mesh->GetElement1(elnr),ElementId(BBND,elnr));
 	}
     }
 
@@ -621,7 +627,13 @@ namespace ngcomp
     template <int DIM, VorB vb>
       inline Ngs_Element GetElement (size_t elnr) const
     {
-      return Ngs_Element (mesh->GetElement<DIM> (elnr), ElementId(vb, elnr));
+      switch(DIM)
+      {
+      case 0: return Ngs_Element (mesh->GetElement0 (elnr), ElementId(vb, elnr));
+      case 1: return Ngs_Element (mesh->GetElement1 (elnr), ElementId(vb, elnr));
+      case 2: return Ngs_Element (mesh->GetElement2 (elnr), ElementId(vb, elnr));
+      case 3: return Ngs_Element (mesh->GetElement3 (elnr), ElementId(vb, elnr));
+      }
     }
 
     auto GetTimeStamp() const { return timestamp; }
@@ -685,19 +697,15 @@ namespace ngcomp
        The method is not yet fully functional.
      */
     template <int DIM>
-    netgen::Ng_Node<DIM> GetNode (size_t nr) const
-    {
-      switch(DIM)
-      {
-      case 0 : return mesh->GetNode0 (nr);
-      break;
-      case 1 : return mesh->GetNode1 (nr);
-      break;
-      case 2 : return mesh->GetNode2 (nr);
-      break;
-      }
-      
-    }
+    netgen::Ng_Node<DIM> GetNode (size_t nr) const;
+    // {
+    //   switch(DIM)
+    //   {
+    //     case 0 : return mesh->GetNode0 (nr);
+    //     case 1 : return mesh->GetNode1 (nr);
+    //     case 2 : return mesh->GetNode2 (nr);
+    //   }
+    // }
 
     /// returns the points of an element.
     /// vertices and possibly edge-midpoints
@@ -786,13 +794,13 @@ namespace ngcomp
     /// returns vertex numbers of face
     auto GetFacePNums (size_t fnr) const
     {
-      return ArrayObject (mesh->GetNode<2> (fnr).vertices);
+      return ArrayObject (mesh->GetNode2 (fnr).vertices);
     }
     /// returns vertex numbers of edge
     [[deprecated("Use GetEdgePNums(enr) instead!")]]                            
     void GetEdgePNums (int enr, int & pn1, int & pn2) const
     {
-      auto edge = mesh->GetNode<1>(enr);
+      auto edge = mesh->GetNode1(enr);
       pn1 = edge.vertices[0];
       pn2 = edge.vertices[1];
     }
@@ -810,7 +818,7 @@ namespace ngcomp
     */
     auto GetEdgePNums (size_t enr) const
     {
-      auto vts = mesh->GetNode<1>(enr).vertices;
+      auto vts = mesh->GetNode1(enr).vertices;
       return INT<2>(vts[0],vts[1]);
     }
     /// returns all elements connected to an edge
@@ -838,11 +846,11 @@ namespace ngcomp
 
     void GetVertexElements (size_t vnr, Array<int> & elems) const;
     auto GetVertexElements (size_t vnr) const 
-    { return ArrayObject(mesh->GetNode<0> (vnr).elements); }
+    { return ArrayObject(mesh->GetNode0 (vnr).elements); }
 
     void GetVertexSurfaceElements (size_t vnr, Array<int> & elems) const;
     auto GetVertexSurfaceElements (size_t vnr) const 
-    { return ArrayObject(mesh->GetNode<0> (vnr).bnd_elements); }
+    { return ArrayObject(mesh->GetNode0 (vnr).bnd_elements); }
     
     /// number of facets of an element. 
     /// facets are edges (2D) or faces (3D)
@@ -866,7 +874,7 @@ namespace ngcomp
     void GetFacetPNums (int fnr, Array<int> & pnums) const;
     /// geometry type of facet
     ELEMENT_TYPE GetFaceType (int fnr) const
-    { return (mesh->GetNode<2>(fnr).vertices.Size() == 3) ? ET_TRIG : ET_QUAD; }
+    { return (mesh->GetNode2(fnr).vertices.Size() == 3) ? ET_TRIG : ET_QUAD; }
     ELEMENT_TYPE GetFacetType (int fnr) const;    
     /// elements connected to facet
     void GetFacetElements (int fnr, Array<int> & elnums) const
@@ -1162,6 +1170,25 @@ namespace ngcomp
   {
     return ma.GetElement(T_ElementId<VB,DIM>(nr));
   }
+
+    template<>
+    netgen::Ng_Node<0> MeshAccess::GetNode (size_t nr) const
+    {
+        return mesh->GetNode0 (nr);
+    }
+
+    template<>
+    netgen::Ng_Node<1> MeshAccess::GetNode (size_t nr) const
+    {
+        return mesh->GetNode1 (nr);
+    }
+
+    template<>
+    netgen::Ng_Node<2> MeshAccess::GetNode (size_t nr) const
+    {
+        return mesh->GetNode2 (nr);
+    }
+
 
   
   class Region
