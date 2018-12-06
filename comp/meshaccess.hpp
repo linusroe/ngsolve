@@ -193,7 +193,7 @@ namespace ngcomp
 
   class NGS_DLL_HEADER MeshAccess : public BaseStatusHandler
   {
-    std::unique_ptr<netgen::Ngx_Mesh> mesh;
+    std::shared_ptr<netgen::Ngx_Mesh> mesh;
 
     /// buffered global quantities:
     /// dimension of the domain. Set to -1 if no mesh is present

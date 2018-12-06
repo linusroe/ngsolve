@@ -1093,7 +1093,7 @@ namespace ngcomp
     // static Timer t("getedgeelements"); RegionTimer reg(t);    
     elnums.SetSize0();
 
-    auto vts = mesh->GetNode<1>(enr).vertices;
+    auto vts = mesh->GetNode1(enr).vertices;
     auto velems0 = GetVertexElements(vts[0]);
     auto velems1 = GetVertexElements(vts[1]);
     
@@ -1166,7 +1166,7 @@ namespace ngcomp
 
   void MeshAccess :: GetFacePNums (int fnr, Array<int> & pnums) const
   {
-    pnums = ArrayObject (mesh->GetNode<2> (fnr).vertices);
+    pnums = ArrayObject (mesh->GetNode2 (fnr).vertices);
   }
 
  
@@ -1184,11 +1184,11 @@ namespace ngcomp
     if (dim == 3)
       {
         elnums.SetSize0();
-        auto vnums = ArrayObject(mesh->GetNode<2> (fnr).vertices);
-        auto vels = ArrayObject(mesh->GetNode<0> (vnums[0]).elements);
+        auto vnums = ArrayObject(mesh->GetNode2 (fnr).vertices);
+        auto vels = ArrayObject(mesh->GetNode0 (vnums[0]).elements);
         for (auto el : vels)
           {
-            for (int f : ArrayObject(mesh->GetElement<3>(el).faces))
+            for (int f : ArrayObject(mesh->GetElement3(el).faces))
               if (f == fnr)
                 elnums.Append (el);
           }
@@ -1245,7 +1245,7 @@ namespace ngcomp
   void MeshAccess :: GetEdgePNums (int enr, Array<int> & pnums) const
   {
     pnums.SetSize(2);
-    auto edge = mesh->GetNode<1>(enr);
+    auto edge = mesh->GetNode1(enr);
     pnums[0] = edge.vertices[0];
     pnums[1] = edge.vertices[1];
   }
@@ -1273,7 +1273,7 @@ namespace ngcomp
 	GetFacePNums(fnr, pnums);
 	return (pnums.Size() == 3) ? ET_TRIG : ET_QUAD;
         */
-        return (mesh->GetNode<2>(fnr).vertices.Size() == 3) ? ET_TRIG : ET_QUAD;
+        return (mesh->GetNode2(fnr).vertices.Size() == 3) ? ET_TRIG : ET_QUAD;
       }
   }
 
@@ -1330,7 +1330,7 @@ namespace ngcomp
   
   void MeshAccess :: GetVertexElements (size_t vnr, Array<int> & elnrs) const
   {
-    elnrs = ArrayObject(mesh->GetNode<0> (vnr).elements);
+    elnrs = ArrayObject(mesh->GetNode0 (vnr).elements);
     /*
     int nel = Ng_GetNVertexElements (vnr+1);
     elnrs.SetSize (nel);
@@ -1557,7 +1557,7 @@ namespace ngcomp
       case BBBND: default:
         {
           ElementTransformation * eltrans;
-          Ngs_Element el(mesh->GetElement<0>(elnr), ElementId(BBBND,elnr));
+          Ngs_Element el(mesh->GetElement0(elnr), ElementId(BBBND,elnr));
           GridFunction * loc_deformation = deformation.get();
           if(loc_deformation)
             eltrans = new (lh) ALE_ElementTransformation<0,3, Ng_ElementTransformation<0,3>>
