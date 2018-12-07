@@ -103,19 +103,19 @@ namespace ngcomp
     virtual void CalcJacobian (const IntegrationPoint & ip,
 			       FlatMatrix<> dxdxi) const override
     {
-      mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), NULL, &dxdxi(0));
+      mesh->ElementTransformationFun <DIMS,DIMR> (elnr, &ip(0), NULL, &dxdxi(0));
     }
     
     virtual void CalcPoint (const IntegrationPoint & ip,
 			    FlatVector<> point) const override
     {
-      mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), NULL);
+      mesh->ElementTransformationFun <DIMS,DIMR> (elnr, &ip(0), &point(0), NULL);
     }
 
     virtual void CalcPointJacobian (const IntegrationPoint & ip,
 				    FlatVector<> point, FlatMatrix<> dxdxi) const override
     {
-      mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), &dxdxi(0));
+      mesh->ElementTransformationFun <DIMS,DIMR> (elnr, &ip(0), &point(0), &dxdxi(0));
     }
 
     virtual BaseMappedIntegrationPoint & operator() (const IntegrationPoint & ip, Allocator & lh) const override
@@ -146,7 +146,7 @@ namespace ngcomp
       MappedIntegrationRule<DIMS,DIMR> & mir = 
 	static_cast<MappedIntegrationRule<DIMS,DIMR> &> (bmir);
       
-      mesh->mesh->MultiElementTransformation <DIMS,DIMR>
+        mesh->MultiElementTransformation<DIMS,DIMR>
         (elnr, ir.Size(),
          &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
          &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
@@ -172,7 +172,7 @@ namespace ngcomp
       SIMD_MappedIntegrationRule<DIMS,DIMR> & mir = 
 	static_cast<SIMD_MappedIntegrationRule<DIMS,DIMR> &> (bmir);
       
-      mesh->mesh->MultiElementTransformation <DIMS,DIMR>
+        mesh->MultiElementTransformation<DIMS,DIMR>
         (elnr, ir.Size(),
          &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
          &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
@@ -517,7 +517,7 @@ namespace ngcomp
       else
         {
           Vec<DIMS> pref = 0.0;
-          mesh->ElementTransformation <DIMS,DIMR> (elnr, &pref(0), &p0(0), &mat(0));
+          mesh->ElementTransformationFun <DIMS,DIMR> (elnr, &pref(0), &p0(0), &mat(0));
         }
     }
 
@@ -1963,55 +1963,55 @@ namespace ngcomp
     Ng_AddPointCurvePoint(&(point(0)));
   }
 
-  template <> void MeshAccess :: ElementTransformation<3,3>
+  template <> void MeshAccess :: ElementTransformationFun<3,3>
   (int elnr, const double * xi, double * x, double * dxdxi) const
   {
     mesh -> ElementTransformation3x3 (elnr, xi, x, dxdxi);
   }
 
-  template <> void MeshAccess :: ElementTransformation<2,3>
+  template <> void MeshAccess :: ElementTransformationFun<2,3>
   (int elnr, const double * xi, double * x, double * dxdxi) const
   {
     mesh -> ElementTransformation2x3 (elnr, xi, x, dxdxi);
   }
 
-  template <> void MeshAccess :: ElementTransformation<1,3>
+  template <> void MeshAccess :: ElementTransformationFun<1,3>
   (int elnr, const double * xi, double * x, double * dxdxi) const
   {
     mesh -> ElementTransformation1x3 (elnr, xi, x, dxdxi);
   }
  
-  template <> void MeshAccess :: ElementTransformation<0,3>
+  template <> void MeshAccess :: ElementTransformationFun<0,3>
   (int elnr, const double * xi, double * x, double * dxdxi) const
   {
     mesh -> ElementTransformation0x3 (elnr, xi, x, dxdxi);
   }
 
-  template <> void MeshAccess :: ElementTransformation<2,2>
+  template <> void MeshAccess :: ElementTransformationFun<2,2>
   (int elnr, const double * xi, double * x, double * dxdxi) const
   {
     mesh -> ElementTransformation2x2 (elnr, xi, x, dxdxi);
   }
 
-  template <> void MeshAccess :: ElementTransformation<1,2>
+  template <> void MeshAccess :: ElementTransformationFun<1,2>
   (int elnr, const double * xi, double * x, double * dxdxi) const
   {
     mesh -> ElementTransformation1x2 (elnr, xi, x, dxdxi);
   }
 
-  template <> void MeshAccess :: ElementTransformation<1,1>
+  template <> void MeshAccess :: ElementTransformationFun<1,1>
   (int elnr, const double * xi, double * x, double * dxdxi) const
   {
     mesh -> ElementTransformation1x1 (elnr, xi, x, dxdxi);
   }
 
-  template <> void MeshAccess :: ElementTransformation<0,2>
+  template <> void MeshAccess :: ElementTransformationFun<0,2>
   (int elnr, const double * xi, double * x, double * dxdxi) const
   {
     mesh -> ElementTransformation0x2 (elnr, xi, x, dxdxi);
   }
 
-  template <> void MeshAccess :: ElementTransformation<0,1>
+  template <> void MeshAccess :: ElementTransformationFun<0,1>
   (int elnr, const double * xi, double * x, double * dxdxi) const
   {
     mesh -> ElementTransformation0x1 (elnr, xi, x, dxdxi);

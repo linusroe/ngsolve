@@ -361,10 +361,10 @@ namespace ngcomp
 
 
     template <int DIMS, int DIMR>
-    void ElementTransformation (int elnr,
-                                const double * xi, 
-                                double * x, 
-                                double * dxdxi) const;
+    void ElementTransformationFun (int elnr,
+                                  const double * xi, 
+                                  double * x, 
+                                  double * dxdxi) const;
 
     template <typename TFUNC>
     void IterateElements (VorB vb, 
