@@ -358,6 +358,14 @@ namespace ngcomp
     auto Faces() const { return Nodes<NT_FACE>(); }
     auto Cells() const { return Nodes<NT_CELL>(); }
 
+
+
+    template <int DIMS, int DIMR>
+    void ElementTransformation (int elnr,
+                                const double * xi, 
+                                double * x, 
+                                double * dxdxi) const;
+
     template <typename TFUNC>
     void IterateElements (VorB vb, 
                           LocalHeap & clh, 

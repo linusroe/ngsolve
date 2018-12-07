@@ -103,19 +103,19 @@ namespace ngcomp
     virtual void CalcJacobian (const IntegrationPoint & ip,
 			       FlatMatrix<> dxdxi) const override
     {
-      mesh->mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), NULL, &dxdxi(0));
+      mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), NULL, &dxdxi(0));
     }
     
     virtual void CalcPoint (const IntegrationPoint & ip,
 			    FlatVector<> point) const override
     {
-      mesh->mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), NULL);
+      mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), NULL);
     }
 
     virtual void CalcPointJacobian (const IntegrationPoint & ip,
 				    FlatVector<> point, FlatMatrix<> dxdxi) const override
     {
-      mesh->mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), &dxdxi(0));
+      mesh->ElementTransformation <DIMS,DIMR> (elnr, &ip(0), &point(0), &dxdxi(0));
     }
 
     virtual BaseMappedIntegrationPoint & operator() (const IntegrationPoint & ip, Allocator & lh) const override
@@ -517,7 +517,7 @@ namespace ngcomp
       else
         {
           Vec<DIMS> pref = 0.0;
-          mesh->mesh->ElementTransformation <DIMS,DIMR> (elnr, &pref(0), &p0(0), &mat(0));
+          mesh->ElementTransformation <DIMS,DIMR> (elnr, &pref(0), &p0(0), &mat(0));
         }
     }
 
@@ -1963,7 +1963,59 @@ namespace ngcomp
     Ng_AddPointCurvePoint(&(point(0)));
   }
 
+  template <> void MeshAccess :: ElementTransformation<3,3>
+  (int elnr, const double * xi, double * x, double * dxdxi) const
+  {
+    mesh -> ElementTransformation3x3 (elnr, xi, x, dxdxi);
+  }
+
+  template <> void MeshAccess :: ElementTransformation<2,3>
+  (int elnr, const double * xi, double * x, double * dxdxi) const
+  {
+    mesh -> ElementTransformation2x3 (elnr, xi, x, dxdxi);
+  }
+
+  template <> void MeshAccess :: ElementTransformation<1,3>
+  (int elnr, const double * xi, double * x, double * dxdxi) const
+  {
+    mesh -> ElementTransformation1x3 (elnr, xi, x, dxdxi);
+  }
  
+  template <> void MeshAccess :: ElementTransformation<0,3>
+  (int elnr, const double * xi, double * x, double * dxdxi) const
+  {
+    mesh -> ElementTransformation0x3 (elnr, xi, x, dxdxi);
+  }
+
+  template <> void MeshAccess :: ElementTransformation<2,2>
+  (int elnr, const double * xi, double * x, double * dxdxi) const
+  {
+    mesh -> ElementTransformation2x2 (elnr, xi, x, dxdxi);
+  }
+
+  template <> void MeshAccess :: ElementTransformation<1,2>
+  (int elnr, const double * xi, double * x, double * dxdxi) const
+  {
+    mesh -> ElementTransformation1x2 (elnr, xi, x, dxdxi);
+  }
+
+  template <> void MeshAccess :: ElementTransformation<1,1>
+  (int elnr, const double * xi, double * x, double * dxdxi) const
+  {
+    mesh -> ElementTransformation1x1 (elnr, xi, x, dxdxi);
+  }
+
+  template <> void MeshAccess :: ElementTransformation<0,2>
+  (int elnr, const double * xi, double * x, double * dxdxi) const
+  {
+    mesh -> ElementTransformation0x2 (elnr, xi, x, dxdxi);
+  }
+
+  template <> void MeshAccess :: ElementTransformation<0,1>
+  (int elnr, const double * xi, double * x, double * dxdxi) const
+  {
+    mesh -> ElementTransformation0x1 (elnr, xi, x, dxdxi);
+  }
 
 #ifdef PARALLEL
  
