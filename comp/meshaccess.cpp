@@ -1367,26 +1367,21 @@ namespace ngcomp
       return pml_trafos[_domnr];
     }
     
-
-
-
-
-  
-  template <int DIM>
+  template <>
   ElementTransformation & MeshAccess :: 
-  GetTrafoDim (size_t elnr, Allocator & lh) const
+  GetTrafoDim<1> (size_t elnr, Allocator & lh) const
   {
     // static Timer t("MeshAccess::GetTrafoDim"); RegionTimer reg(t);
     
     ElementTransformation * eltrans;
     GridFunction * loc_deformation = deformation.get();
     
-    Ngs_Element el (mesh->GetElement<DIM> (elnr), ElementId(VOL, elnr));
+    Ngs_Element el (mesh->GetElement1 (elnr), ElementId(VOL, elnr));
     
     if (pml_trafos[el.GetIndex()])
       {
         eltrans = new (lh)
-          PML_ElementTransformation<DIM, DIM, Ng_ElementTransformation<DIM,DIM>>
+          PML_ElementTransformation<1, 1, Ng_ElementTransformation<1,1>>
           (this, el.GetType(), 
            ElementId(VOL,elnr), el.GetIndex(), *pml_trafos[el.GetIndex()]);
       }
@@ -1395,7 +1390,7 @@ namespace ngcomp
       {
         if (el.is_curved)
           eltrans = new (lh)
-            ALE_ElementTransformation<DIM, DIM, Ng_ElementTransformation<DIM,DIM>>
+            ALE_ElementTransformation<1, 1, Ng_ElementTransformation<1,1>>
             (this, el.GetType(), 
              ElementId(VOL,elnr), el.GetIndex(),
              loc_deformation, 
@@ -1404,7 +1399,7 @@ namespace ngcomp
         else
 
           eltrans = new (lh)
-            ALE_ElementTransformation<DIM, DIM, Ng_ConstElementTransformation<DIM,DIM>>
+            ALE_ElementTransformation<1, 1, Ng_ConstElementTransformation<1,1>>
             (this, el.GetType(), 
              ElementId(VOL,elnr), el.GetIndex(),
              loc_deformation, 
@@ -1413,11 +1408,136 @@ namespace ngcomp
 
     else if ( el.is_curved )
 
-      eltrans = new (lh) Ng_ElementTransformation<DIM,DIM> (this, el.GetType(), 
+      eltrans = new (lh) Ng_ElementTransformation<1,1> (this, el.GetType(), 
                                                             ElementId(VOL,elnr), el.GetIndex()); 
 
     else
-      eltrans = new (lh) Ng_ConstElementTransformation<DIM,DIM> (this, el.GetType(), 
+      eltrans = new (lh) Ng_ConstElementTransformation<1,1> (this, el.GetType(), 
+                                                                 ElementId(VOL,elnr), el.GetIndex()); 
+
+    /*
+    eltrans->SetElementType (el.GetType());
+    int elind = el.GetIndex();
+    eltrans->SetElement (0, elnr, elind);
+    */
+
+    if(higher_integration_order.Size() == GetNE() && higher_integration_order[elnr])
+      eltrans->SetHigherIntegrationOrder();
+    else
+      eltrans->UnSetHigherIntegrationOrder();
+
+    return *eltrans;
+  }
+
+  
+  template <>
+  ElementTransformation & MeshAccess :: 
+  GetTrafoDim<2> (size_t elnr, Allocator & lh) const
+  {
+    // static Timer t("MeshAccess::GetTrafoDim"); RegionTimer reg(t);
+    
+    ElementTransformation * eltrans;
+    GridFunction * loc_deformation = deformation.get();
+    
+    Ngs_Element el (mesh->GetElement2 (elnr), ElementId(VOL, elnr));
+    
+    if (pml_trafos[el.GetIndex()])
+      {
+        eltrans = new (lh)
+          PML_ElementTransformation<2, 2, Ng_ElementTransformation<2,2>>
+          (this, el.GetType(), 
+           ElementId(VOL,elnr), el.GetIndex(), *pml_trafos[el.GetIndex()]);
+      }
+    
+    else if (loc_deformation)
+      {
+        if (el.is_curved)
+          eltrans = new (lh)
+            ALE_ElementTransformation<2, 2, Ng_ElementTransformation<2,2>>
+            (this, el.GetType(), 
+             ElementId(VOL,elnr), el.GetIndex(),
+             loc_deformation, 
+             dynamic_cast<LocalHeap&> (lh));
+
+        else
+
+          eltrans = new (lh)
+            ALE_ElementTransformation<2, 2, Ng_ConstElementTransformation<2,2>>
+            (this, el.GetType(), 
+             ElementId(VOL,elnr), el.GetIndex(),
+             loc_deformation, 
+             dynamic_cast<LocalHeap&> (lh));
+      }
+
+    else if ( el.is_curved )
+
+      eltrans = new (lh) Ng_ElementTransformation<2,2> (this, el.GetType(), 
+                                                            ElementId(VOL,elnr), el.GetIndex()); 
+
+    else
+      eltrans = new (lh) Ng_ConstElementTransformation<2,2> (this, el.GetType(), 
+                                                                 ElementId(VOL,elnr), el.GetIndex()); 
+
+    /*
+    eltrans->SetElementType (el.GetType());
+    int elind = el.GetIndex();
+    eltrans->SetElement (0, elnr, elind);
+    */
+
+    if(higher_integration_order.Size() == GetNE() && higher_integration_order[elnr])
+      eltrans->SetHigherIntegrationOrder();
+    else
+      eltrans->UnSetHigherIntegrationOrder();
+
+    return *eltrans;
+  }
+
+  template <>
+  ElementTransformation & MeshAccess :: 
+  GetTrafoDim<3> (size_t elnr, Allocator & lh) const
+  {
+    // static Timer t("MeshAccess::GetTrafoDim"); RegionTimer reg(t);
+    
+    ElementTransformation * eltrans;
+    GridFunction * loc_deformation = deformation.get();
+    
+    Ngs_Element el (mesh->GetElement3 (elnr), ElementId(VOL, elnr));
+    
+    if (pml_trafos[el.GetIndex()])
+      {
+        eltrans = new (lh)
+          PML_ElementTransformation<3, 3, Ng_ElementTransformation<3,3>>
+          (this, el.GetType(), 
+           ElementId(VOL,elnr), el.GetIndex(), *pml_trafos[el.GetIndex()]);
+      }
+    
+    else if (loc_deformation)
+      {
+        if (el.is_curved)
+          eltrans = new (lh)
+            ALE_ElementTransformation<3, 3, Ng_ElementTransformation<3,3>>
+            (this, el.GetType(), 
+             ElementId(VOL,elnr), el.GetIndex(),
+             loc_deformation, 
+             dynamic_cast<LocalHeap&> (lh));
+
+        else
+
+          eltrans = new (lh)
+            ALE_ElementTransformation<3, 3, Ng_ConstElementTransformation<3,3>>
+            (this, el.GetType(), 
+             ElementId(VOL,elnr), el.GetIndex(),
+             loc_deformation, 
+             dynamic_cast<LocalHeap&> (lh));
+      }
+
+    else if ( el.is_curved )
+
+      eltrans = new (lh) Ng_ElementTransformation<3,3> (this, el.GetType(), 
+                                                            ElementId(VOL,elnr), el.GetIndex()); 
+
+    else
+      eltrans = new (lh) Ng_ConstElementTransformation<3,3> (this, el.GetType(), 
                                                                  ElementId(VOL,elnr), el.GetIndex()); 
 
     /*
@@ -1435,20 +1555,20 @@ namespace ngcomp
   }
 
 
-  template <int DIM>
+  template <>
   ElementTransformation & MeshAccess :: 
-  GetSTrafoDim (size_t elnr, Allocator & lh) const
+  GetSTrafoDim<1> (size_t elnr, Allocator & lh) const
   {
     // static Timer t("MeshAccess::GetTrafoDim");
 
     ElementTransformation * eltrans;
     
-    Ngs_Element el(mesh->GetElement<DIM-1> (elnr), ElementId(BND, elnr));
+    Ngs_Element el(mesh->GetElement0 (elnr), ElementId(BND, elnr));
     GridFunction * loc_deformation = deformation.get();
     
     if (loc_deformation)
 
-      eltrans = new (lh) ALE_ElementTransformation<DIM-1,DIM, Ng_ElementTransformation<DIM-1,DIM>>
+      eltrans = new (lh) ALE_ElementTransformation<0,1, Ng_ElementTransformation<0,1>>
         (this, el.GetType(), 
          ElementId(BND,elnr), el.GetIndex(),
          loc_deformation, 
@@ -1456,11 +1576,11 @@ namespace ngcomp
     
     else if ( el.is_curved )
 
-      eltrans = new (lh) Ng_ElementTransformation<DIM-1,DIM> (this, el.GetType(), 
+      eltrans = new (lh) Ng_ElementTransformation<0,1> (this, el.GetType(), 
                                                               ElementId(BND,elnr), el.GetIndex()); 
     
     else
-      eltrans = new (lh) Ng_ConstElementTransformation<DIM-1,DIM> (this, el.GetType(), 
+      eltrans = new (lh) Ng_ConstElementTransformation<0,1> (this, el.GetType(), 
                                                                    ElementId(BND,elnr), el.GetIndex()); 
 
     /*
@@ -1477,25 +1597,139 @@ namespace ngcomp
     return *eltrans;
   }
 
-  template <int DIM>
+  template <>
+  ElementTransformation & MeshAccess :: 
+  GetSTrafoDim<2> (size_t elnr, Allocator & lh) const
+  {
+    // static Timer t("MeshAccess::GetTrafoDim");
+
+    ElementTransformation * eltrans;
+    
+    Ngs_Element el(mesh->GetElement1 (elnr), ElementId(BND, elnr));
+    GridFunction * loc_deformation = deformation.get();
+    
+    if (loc_deformation)
+
+      eltrans = new (lh) ALE_ElementTransformation<1,2, Ng_ElementTransformation<1,2>>
+        (this, el.GetType(), 
+         ElementId(BND,elnr), el.GetIndex(),
+         loc_deformation, 
+         dynamic_cast<LocalHeap&> (lh)); 
+    
+    else if ( el.is_curved )
+
+      eltrans = new (lh) Ng_ElementTransformation<1,2> (this, el.GetType(), 
+                                                              ElementId(BND,elnr), el.GetIndex()); 
+    
+    else
+      eltrans = new (lh) Ng_ConstElementTransformation<1,2> (this, el.GetType(), 
+                                                                   ElementId(BND,elnr), el.GetIndex()); 
+
+    /*
+    eltrans->SetElementType (el.GetType());
+    int elind = el.GetIndex();
+    eltrans->SetElement (0, elnr, elind);
+    */
+
+    if(higher_integration_order.Size() == GetNSE() && higher_integration_order[elnr])
+      eltrans->SetHigherIntegrationOrder();
+    else
+      eltrans->UnSetHigherIntegrationOrder();
+
+    return *eltrans;
+  }
+
+  template <>
+  ElementTransformation & MeshAccess :: 
+  GetSTrafoDim<3> (size_t elnr, Allocator & lh) const
+  {
+    // static Timer t("MeshAccess::GetTrafoDim");
+
+    ElementTransformation * eltrans;
+    
+    Ngs_Element el(mesh->GetElement2 (elnr), ElementId(BND, elnr));
+    GridFunction * loc_deformation = deformation.get();
+    
+    if (loc_deformation)
+
+      eltrans = new (lh) ALE_ElementTransformation<2,3, Ng_ElementTransformation<2,3>>
+        (this, el.GetType(), 
+         ElementId(BND,elnr), el.GetIndex(),
+         loc_deformation, 
+         dynamic_cast<LocalHeap&> (lh)); 
+    
+    else if ( el.is_curved )
+
+      eltrans = new (lh) Ng_ElementTransformation<2,3> (this, el.GetType(), 
+                                                              ElementId(BND,elnr), el.GetIndex()); 
+    
+    else
+      eltrans = new (lh) Ng_ConstElementTransformation<2,3> (this, el.GetType(), 
+                                                                   ElementId(BND,elnr), el.GetIndex()); 
+
+    /*
+    eltrans->SetElementType (el.GetType());
+    int elind = el.GetIndex();
+    eltrans->SetElement (0, elnr, elind);
+    */
+
+    if(higher_integration_order.Size() == GetNSE() && higher_integration_order[elnr])
+      eltrans->SetHigherIntegrationOrder();
+    else
+      eltrans->UnSetHigherIntegrationOrder();
+
+    return *eltrans;
+  }
+
+
+  template <>
   ElementTransformation & MeshAccess ::
-  GetCD2TrafoDim (size_t elnr, Allocator & lh) const
+  GetCD2TrafoDim<2> (size_t elnr, Allocator & lh) const
   {
     ElementTransformation * eltrans;
-    Ngs_Element el(mesh->GetElement<DIM-2>(elnr), ElementId(BBND,elnr));
+    Ngs_Element el(mesh->GetElement0(elnr), ElementId(BBND,elnr));
     GridFunction * loc_deformation = deformation.get();
     if(loc_deformation)
-      eltrans = new (lh) ALE_ElementTransformation<DIM-2,DIM, Ng_ElementTransformation<DIM-2,DIM>>
+      eltrans = new (lh) ALE_ElementTransformation<0,2, Ng_ElementTransformation<0,2>>
 	(this,el.GetType(),
 	 ElementId(BBND,elnr), el.GetIndex(),
 	 loc_deformation,
 	 dynamic_cast<LocalHeap&>(lh));
     else if( el.is_curved )
-      eltrans = new (lh) Ng_ElementTransformation<DIM-2,DIM> (this, el.GetType(),
+      eltrans = new (lh) Ng_ElementTransformation<0,2> (this, el.GetType(),
 							      ElementId(BBND,elnr), el.GetIndex());
 
     else
-      eltrans = new (lh) Ng_ConstElementTransformation<DIM-2,DIM> (this, el.GetType(),
+      eltrans = new (lh) Ng_ConstElementTransformation<0,2> (this, el.GetType(),
+								   ElementId(BBND,elnr), el.GetIndex());
+
+    if(higher_integration_order.Size() == GetNCD2E() && higher_integration_order[elnr])
+      eltrans->SetHigherIntegrationOrder();
+    else
+      eltrans->UnSetHigherIntegrationOrder();
+
+    return *eltrans;
+  }
+
+  template <>
+  ElementTransformation & MeshAccess ::
+  GetCD2TrafoDim<3> (size_t elnr, Allocator & lh) const
+  {
+    ElementTransformation * eltrans;
+    Ngs_Element el(mesh->GetElement1(elnr), ElementId(BBND,elnr));
+    GridFunction * loc_deformation = deformation.get();
+    if(loc_deformation)
+      eltrans = new (lh) ALE_ElementTransformation<1,3, Ng_ElementTransformation<1,3>>
+	(this,el.GetType(),
+	 ElementId(BBND,elnr), el.GetIndex(),
+	 loc_deformation,
+	 dynamic_cast<LocalHeap&>(lh));
+    else if( el.is_curved )
+      eltrans = new (lh) Ng_ElementTransformation<1,3> (this, el.GetType(),
+							      ElementId(BBND,elnr), el.GetIndex());
+
+    else
+      eltrans = new (lh) Ng_ConstElementTransformation<1,3> (this, el.GetType(),
 								   ElementId(BBND,elnr), el.GetIndex());
 
     if(higher_integration_order.Size() == GetNCD2E() && higher_integration_order[elnr])
