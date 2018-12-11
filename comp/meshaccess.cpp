@@ -134,7 +134,186 @@ namespace ngcomp
     }
 
     virtual void CalcMultiPointJacobian (const IntegrationRule & ir,
-					 BaseMappedIntegrationRule & bmir) const override
+					 BaseMappedIntegrationRule & bmir) const override;
+
+    virtual void CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
+					 SIMD_BaseMappedIntegrationRule & bmir) const override;
+
+    virtual const ElementTransformation & VAddDeformation (const GridFunction * gf, LocalHeap & lh) const override
+    {
+      return * new (lh) ALE_ElementTransformation<DIMS,DIMR,Ng_ElementTransformation<DIMS,DIMR>>
+        (gf->GetMeshAccess().get(), eltype, GetElementId(), elindex, gf, lh);
+    }
+  };
+  
+
+  template <> void MeshAccess :: MultiElementTransformationFun<3,3>
+                                     (int elnr, int npts,
+                                     const double * xi, size_t sxi,
+                                     double * x, size_t sx,
+                                     double * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation3x3 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<2,3>
+                                     (int elnr, int npts,
+                                     const double * xi, size_t sxi,
+                                     double * x, size_t sx,
+                                     double * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation2x3 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<1,3>
+                                     (int elnr, int npts,
+                                     const double * xi, size_t sxi,
+                                     double * x, size_t sx,
+                                     double * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation1x3 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<0,3>
+                                     (int elnr, int npts,
+                                     const double * xi, size_t sxi,
+                                     double * x, size_t sx,
+                                     double * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation0x3 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<2,2>
+                                     (int elnr, int npts,
+                                     const double * xi, size_t sxi,
+                                     double * x, size_t sx,
+                                     double * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation2x2 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<1,2>
+                                     (int elnr, int npts,
+                                     const double * xi, size_t sxi,
+                                     double * x, size_t sx,
+                                     double * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation1x2 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<1,1>
+                                     (int elnr, int npts,
+                                     const double * xi, size_t sxi,
+                                     double * x, size_t sx,
+                                     double * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation1x1 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<0,2>
+                                     (int elnr, int npts,
+                                     const double * xi, size_t sxi,
+                                     double * x, size_t sx,
+                                     double * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation0x2 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<0,1>
+                                     (int elnr, int npts,
+                                     const double * xi, size_t sxi,
+                                     double * x, size_t sx,
+                                     double * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation0x1 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<3,3>
+                                     (int elnr, int npts,
+                                     const tAVXd * xi, size_t sxi,
+                                     tAVXd * x, size_t sx,
+                                     tAVXd * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation3x3 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<2,3>
+                                     (int elnr, int npts,
+                                     const tAVXd * xi, size_t sxi,
+                                     tAVXd * x, size_t sx,
+                                     tAVXd * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation2x3 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<1,3>
+                                     (int elnr, int npts,
+                                     const tAVXd * xi, size_t sxi,
+                                     tAVXd * x, size_t sx,
+                                     tAVXd * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation1x3 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<0,3>
+                                     (int elnr, int npts,
+                                     const tAVXd * xi, size_t sxi,
+                                     tAVXd * x, size_t sx,
+                                     tAVXd * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation0x3 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<2,2>
+                                     (int elnr, int npts,
+                                     const tAVXd * xi, size_t sxi,
+                                     tAVXd * x, size_t sx,
+                                     tAVXd * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation2x2 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<1,2>
+                                     (int elnr, int npts,
+                                     const tAVXd * xi, size_t sxi,
+                                     tAVXd * x, size_t sx,
+                                     tAVXd * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation1x2 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<1,1>
+                                     (int elnr, int npts,
+                                     const tAVXd * xi, size_t sxi,
+                                     tAVXd * x, size_t sx,
+                                     tAVXd * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation1x1 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<0,2>
+                                     (int elnr, int npts,
+                                     const tAVXd * xi, size_t sxi,
+                                     tAVXd * x, size_t sx,
+                                     tAVXd * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation0x2 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+  template <> void MeshAccess :: MultiElementTransformationFun<0,1>
+                                     (int elnr, int npts,
+                                     const tAVXd * xi, size_t sxi,
+                                     tAVXd * x, size_t sx,
+                                     tAVXd * dxdxi, size_t sdxdxi) const
+  {
+    mesh -> MultiElementTransformation0x1 (elnr, npts, xi, sxi, x, sx, dxdxi, sdxdxi);
+  }
+
+
+
+    template<>
+    void Ng_ElementTransformation<3,3> :: CalcMultiPointJacobian (const IntegrationRule & ir,
+					 BaseMappedIntegrationRule & bmir) const
     {
       if (sizeof(IntegrationPoint) % 8 != 0)
         {
@@ -143,10 +322,10 @@ namespace ngcomp
         }
 
       // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
-      MappedIntegrationRule<DIMS,DIMR> & mir = 
-	static_cast<MappedIntegrationRule<DIMS,DIMR> &> (bmir);
+      MappedIntegrationRule<3,3> & mir = 
+	static_cast<MappedIntegrationRule<3,3> &> (bmir);
       
-        mesh->MultiElementTransformation<DIMS,DIMR>
+        mesh->MultiElementTransformationFun<3,3>
         (elnr, ir.Size(),
          &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
          &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
@@ -156,9 +335,36 @@ namespace ngcomp
         mip.Compute();
   }
 
+    template<>
+    void Ng_ElementTransformation<2,2> :: CalcMultiPointJacobian (const IntegrationRule & ir,
+					 BaseMappedIntegrationRule & bmir) const
+    {
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
 
-    virtual void CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
-					 SIMD_BaseMappedIntegrationRule & bmir) const override
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      MappedIntegrationRule<2,2> & mir = 
+	static_cast<MappedIntegrationRule<2,2> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<2,2>
+        (elnr, ir.Size(),
+         &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+
+      for (auto & mip : mir)
+        mip.Compute();
+ }
+
+
+////////////////////////////
+
+template<>
+ void  Ng_ElementTransformation<3,3> :: CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
+					 SIMD_BaseMappedIntegrationRule & bmir) const 
     {
       // static Timer t("eltrafo - nonconst, calcmultipoint"); RegionTimer reg(t);
       // t.AddFlops (ir.GetNIP());
@@ -169,10 +375,10 @@ namespace ngcomp
         }
 
       // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
-      SIMD_MappedIntegrationRule<DIMS,DIMR> & mir = 
-	static_cast<SIMD_MappedIntegrationRule<DIMS,DIMR> &> (bmir);
+      SIMD_MappedIntegrationRule<3,3> & mir = 
+	static_cast<SIMD_MappedIntegrationRule<3,3> &> (bmir);
       
-        mesh->MultiElementTransformation<DIMS,DIMR>
+        mesh->MultiElementTransformationFun<3,3>
         (elnr, ir.Size(),
          &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
          &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
@@ -181,15 +387,6 @@ namespace ngcomp
       for (int i = 0; i < ir.Size(); i++)
         mir[i].Compute();
     }
-
-    virtual const ElementTransformation & VAddDeformation (const GridFunction * gf, LocalHeap & lh) const override
-    {
-      return * new (lh) ALE_ElementTransformation<DIMS,DIMR,Ng_ElementTransformation<DIMS,DIMR>>
-        (gf->GetMeshAccess().get(), eltype, GetElementId(), elindex, gf, lh);
-    }
-    
-  };
-  
 
 
 

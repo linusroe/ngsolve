@@ -366,6 +366,18 @@ namespace ngcomp
                                   double * x, 
                                   double * dxdxi) const;
 
+    template <int DIMS, int DIMR>
+    void MultiElementTransformationFun (int elnr, int npts,
+                                        const double * xi, size_t sxi,
+                                        double * x, size_t sx,
+                                        double * dxdxi, size_t sdxdxi) const;
+
+    template <int DIMS, int DIMR>
+    void MultiElementTransformationFun (int elnr, int npts,
+                                        const tAVXd * xi, size_t sxi,
+                                        tAVXd * x, size_t sx,
+                                        tAVXd * dxdxi, size_t sdxdxi) const;
+
     template <typename TFUNC>
     void IterateElements (VorB vb, 
                           LocalHeap & clh, 
