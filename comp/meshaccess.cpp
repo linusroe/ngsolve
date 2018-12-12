@@ -920,10 +920,24 @@ template<>
 
 
 
-
-
   MeshAccess :: MeshAccess (shared_ptr<netgen::Ngx_Mesh> amesh)
     : mesh(amesh), mesh_comm(ngs_comm)
+  {
+    // the connection to netgen global variables
+    ngstd::testout = netgen::testout;
+    ngstd::printmessage_importance = netgen::printmessage_importance;
+#ifdef PARALLEL
+    // best we can do at the moment to get py-mpi running
+    mesh_comm = MPI_COMM_WORLD;
+    ngs_comm =  MPI_COMM_WORLD;
+#endif
+    mesh->SelectMesh();
+    mesh->UpdateTopology();  // for netgen/ngsolve stand alone
+    UpdateBuffers();
+  }
+
+  MeshAccess :: MeshAccess (shared_ptr<netgen::Ngx_netgen_Mesh> amesh)
+    : mesh(static_pointer_cast<netgen::Ngx_Mesh>(amesh)), mesh_comm(ngs_comm)
   {
     // the connection to netgen global variables
     ngstd::testout = netgen::testout;

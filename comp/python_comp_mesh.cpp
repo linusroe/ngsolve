@@ -315,7 +315,7 @@ mesh (netgen.Mesh): a mesh generated from Netgen
 
     .def(py::init([](shared_ptr<netgen::Mesh> mesh)
                   {
-                    return make_shared<MeshAccess>(make_shared<netgen::Ngx_Mesh>(mesh));
+                    return make_shared<MeshAccess>(make_shared<netgen::Ngx_netgen_Mesh>(mesh));
                   }),
          py::arg("ngmesh"), 
          "Make an NGSolve-mesh from a Netgen mesh")
