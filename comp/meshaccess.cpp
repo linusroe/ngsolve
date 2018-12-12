@@ -359,7 +359,174 @@ namespace ngcomp
         mip.Compute();
  }
 
+    template<>
+    void Ng_ElementTransformation<2,3> :: CalcMultiPointJacobian (const IntegrationRule & ir,
+					 BaseMappedIntegrationRule & bmir) const
+    {
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
 
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      MappedIntegrationRule<2,3> & mir = 
+	static_cast<MappedIntegrationRule<2,3> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<2,3>
+        (elnr, ir.Size(),
+         &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+
+      for (auto & mip : mir)
+        mip.Compute();
+ }
+
+
+    template<>
+    void Ng_ElementTransformation<1,3> :: CalcMultiPointJacobian (const IntegrationRule & ir,
+					 BaseMappedIntegrationRule & bmir) const
+    {
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      MappedIntegrationRule<1,3> & mir = 
+	static_cast<MappedIntegrationRule<1,3> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<1,3>
+        (elnr, ir.Size(),
+         &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+
+      for (auto & mip : mir)
+        mip.Compute();
+ }
+
+    template<>
+    void Ng_ElementTransformation<0,3> :: CalcMultiPointJacobian (const IntegrationRule & ir,
+					 BaseMappedIntegrationRule & bmir) const
+    {
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      MappedIntegrationRule<0,3> & mir = 
+	static_cast<MappedIntegrationRule<0,3> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<0,3>
+        (elnr, ir.Size(),
+         &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+
+      for (auto & mip : mir)
+        mip.Compute();
+ }
+
+    template<>
+    void Ng_ElementTransformation<1,2> :: CalcMultiPointJacobian (const IntegrationRule & ir,
+					 BaseMappedIntegrationRule & bmir) const
+    {
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      MappedIntegrationRule<1,2> & mir = 
+	static_cast<MappedIntegrationRule<1,2> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<1,2>
+        (elnr, ir.Size(),
+         &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+
+      for (auto & mip : mir)
+        mip.Compute();
+ }
+
+    template<>
+    void Ng_ElementTransformation<1,1> :: CalcMultiPointJacobian (const IntegrationRule & ir,
+					 BaseMappedIntegrationRule & bmir) const
+    {
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      MappedIntegrationRule<1,1> & mir = 
+	static_cast<MappedIntegrationRule<1,1> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<1,1>
+        (elnr, ir.Size(),
+         &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+
+      for (auto & mip : mir)
+        mip.Compute();
+ }
+
+    template<>
+    void Ng_ElementTransformation<0,2> :: CalcMultiPointJacobian (const IntegrationRule & ir,
+					 BaseMappedIntegrationRule & bmir) const
+    {
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      MappedIntegrationRule<0,2> & mir = 
+	static_cast<MappedIntegrationRule<0,2> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<0,2>
+        (elnr, ir.Size(),
+         &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+
+      for (auto & mip : mir)
+        mip.Compute();
+ }
+
+    template<>
+    void Ng_ElementTransformation<0,1> :: CalcMultiPointJacobian (const IntegrationRule & ir,
+					 BaseMappedIntegrationRule & bmir) const
+    {
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      MappedIntegrationRule<0,1> & mir = 
+	static_cast<MappedIntegrationRule<0,1> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<0,1>
+        (elnr, ir.Size(),
+         &ir[0](0), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+
+      for (auto & mip : mir)
+        mip.Compute();
+ }
 ////////////////////////////
 
 template<>
@@ -388,7 +555,213 @@ template<>
         mir[i].Compute();
     }
 
+template<>
+ void  Ng_ElementTransformation<2,2> :: CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
+					 SIMD_BaseMappedIntegrationRule & bmir) const 
+    {
+      // static Timer t("eltrafo - nonconst, calcmultipoint"); RegionTimer reg(t);
+      // t.AddFlops (ir.GetNIP());
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
 
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      SIMD_MappedIntegrationRule<2,2> & mir = 
+	static_cast<SIMD_MappedIntegrationRule<2,2> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<2,2>
+        (elnr, ir.Size(),
+         &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0).Data(), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+      
+      for (int i = 0; i < ir.Size(); i++)
+        mir[i].Compute();
+    }
+
+template<>
+ void  Ng_ElementTransformation<2,3> :: CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
+					 SIMD_BaseMappedIntegrationRule & bmir) const 
+    {
+      // static Timer t("eltrafo - nonconst, calcmultipoint"); RegionTimer reg(t);
+      // t.AddFlops (ir.GetNIP());
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      SIMD_MappedIntegrationRule<2,3> & mir = 
+	static_cast<SIMD_MappedIntegrationRule<2,3> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<2,3>
+        (elnr, ir.Size(),
+         &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0).Data(), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+      
+      for (int i = 0; i < ir.Size(); i++)
+        mir[i].Compute();
+    }
+
+template<>
+ void  Ng_ElementTransformation<1,3> :: CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
+					 SIMD_BaseMappedIntegrationRule & bmir) const 
+    {
+      // static Timer t("eltrafo - nonconst, calcmultipoint"); RegionTimer reg(t);
+      // t.AddFlops (ir.GetNIP());
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      SIMD_MappedIntegrationRule<1,3> & mir = 
+	static_cast<SIMD_MappedIntegrationRule<1,3> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<1,3>
+        (elnr, ir.Size(),
+         &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0).Data(), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+      
+      for (int i = 0; i < ir.Size(); i++)
+        mir[i].Compute();
+    }
+
+template<>
+ void  Ng_ElementTransformation<0,3> :: CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
+					 SIMD_BaseMappedIntegrationRule & bmir) const 
+    {
+      // static Timer t("eltrafo - nonconst, calcmultipoint"); RegionTimer reg(t);
+      // t.AddFlops (ir.GetNIP());
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      SIMD_MappedIntegrationRule<0,3> & mir = 
+	static_cast<SIMD_MappedIntegrationRule<0,3> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<0,3>
+        (elnr, ir.Size(),
+         &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0).Data(), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+      
+      for (int i = 0; i < ir.Size(); i++)
+        mir[i].Compute();
+    }
+
+template<>
+ void  Ng_ElementTransformation<1,2> :: CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
+					 SIMD_BaseMappedIntegrationRule & bmir) const 
+    {
+      // static Timer t("eltrafo - nonconst, calcmultipoint"); RegionTimer reg(t);
+      // t.AddFlops (ir.GetNIP());
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      SIMD_MappedIntegrationRule<1,2> & mir = 
+	static_cast<SIMD_MappedIntegrationRule<1,2> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<1,2>
+        (elnr, ir.Size(),
+         &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0).Data(), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+      
+      for (int i = 0; i < ir.Size(); i++)
+        mir[i].Compute();
+    }
+
+template<>
+ void  Ng_ElementTransformation<1,1> :: CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
+					 SIMD_BaseMappedIntegrationRule & bmir) const 
+    {
+      // static Timer t("eltrafo - nonconst, calcmultipoint"); RegionTimer reg(t);
+      // t.AddFlops (ir.GetNIP());
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      SIMD_MappedIntegrationRule<1,1> & mir = 
+	static_cast<SIMD_MappedIntegrationRule<1,1> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<1,1>
+        (elnr, ir.Size(),
+         &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0).Data(), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+      
+      for (int i = 0; i < ir.Size(); i++)
+        mir[i].Compute();
+    }
+
+template<>
+ void  Ng_ElementTransformation<0,2> :: CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
+					 SIMD_BaseMappedIntegrationRule & bmir) const 
+    {
+      // static Timer t("eltrafo - nonconst, calcmultipoint"); RegionTimer reg(t);
+      // t.AddFlops (ir.GetNIP());
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      SIMD_MappedIntegrationRule<0,2> & mir = 
+	static_cast<SIMD_MappedIntegrationRule<0,2> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<0,2>
+        (elnr, ir.Size(),
+         &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0).Data(), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+      
+      for (int i = 0; i < ir.Size(); i++)
+        mir[i].Compute();
+    }
+
+template<>
+ void  Ng_ElementTransformation<0,1> :: CalcMultiPointJacobian (const SIMD_IntegrationRule & ir,
+					 SIMD_BaseMappedIntegrationRule & bmir) const 
+    {
+      // static Timer t("eltrafo - nonconst, calcmultipoint"); RegionTimer reg(t);
+      // t.AddFlops (ir.GetNIP());
+      if (sizeof(IntegrationPoint) % 8 != 0)
+        {
+          cerr << "Integration must should have 8-byte alignment" << endl;
+          exit(1);
+        }
+
+      // static Timer t("eltrans::multipointjacobian"); RegionTimer reg(t);
+      SIMD_MappedIntegrationRule<0,1> & mir = 
+	static_cast<SIMD_MappedIntegrationRule<0,1> &> (bmir);
+      
+        mesh->MultiElementTransformationFun<0,1>
+        (elnr, ir.Size(),
+         &ir[0](0).Data(), ir.Size()>1 ? &ir[1](0)-&ir[0](0) : 0,
+         &mir[0].Point()(0).Data(), ir.Size()>1 ? &mir[1].Point()(0)-&mir[0].Point()(0) : 0, 
+         &mir[0].Jacobian()(0,0).Data(), ir.Size()>1 ? &mir[1].Jacobian()(0,0)-&mir[0].Jacobian()(0,0) : 0);
+      
+      for (int i = 0; i < ir.Size(); i++)
+        mir[i].Compute();
+    }
 
 
   template <int DIMS, int DIMR, typename BASE>
@@ -1022,6 +1395,26 @@ template<>
         in = GetElIndex(ElementId(VOL,elnums[1]))+1;
       }
   }
+
+    template<>
+    netgen::Ng_Node<0> MeshAccess::GetNode (size_t nr) const
+    {
+        return mesh->GetNode0 (nr);
+    }
+
+    template<>
+    netgen::Ng_Node<1> MeshAccess::GetNode (size_t nr) const
+    {
+        return mesh->GetNode1 (nr);
+    }
+
+    template<>
+    netgen::Ng_Node<2> MeshAccess::GetNode (size_t nr) const
+    {
+        return mesh->GetNode2 (nr);
+    }
+
+
 
 
   void MeshAccess :: UpdateBuffers()

@@ -1193,25 +1193,6 @@ namespace ngcomp
     return ma.GetElement(T_ElementId<VB,DIM>(nr));
   }
 
-    template<>
-    netgen::Ng_Node<0> MeshAccess::GetNode (size_t nr) const
-    {
-        return mesh->GetNode0 (nr);
-    }
-
-    template<>
-    netgen::Ng_Node<1> MeshAccess::GetNode (size_t nr) const
-    {
-        return mesh->GetNode1 (nr);
-    }
-
-    template<>
-    netgen::Ng_Node<2> MeshAccess::GetNode (size_t nr) const
-    {
-        return mesh->GetNode2 (nr);
-    }
-
-
   
   class Region
   {
