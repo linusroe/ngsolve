@@ -2,7 +2,7 @@ beforescript:
   stage: build
   script:
     - echo " before script "
-    - nix-shell -p blas liblapack gcc xorg.libXmu zlib cmake mesa_glu mesa icu python36 suitesparse tcl-8_5 tk-8_5 --run "echo \"nix-shell test\" "
+    - nix-shell -p blas liblapack gcc xorg.libXmu zlib cmake mesa_noglu icu python36 suitesparse tcl-8_5 tk-8_5 --run "echo \"nix-shell test\" "
 
 build:
   stage: build
@@ -15,8 +15,8 @@ build:
     - git submodule sync
     - git submodule update --init --recursive
     - cd build
-    - nix-shell -p blas liblapack gcc gfortran gfortran.cc.lib xorg.libXmu zlib cmake mesa_glu mesa icu python36 suitesparse tcl-8_5 tk-8_5 --run "cmake -DCMAKE_INSTALL_PREFIX=`pwd`/inst -DCMAKE_BUILD_TYPE=RELEASE -DUSE_CCACHE=ON -DUSE_GUI=OFF -DTCL_INCLUDE_PATH=/usr/include/tcl8.5/ ../."
-    - nix-shell -p blas liblapack gcc gfortran gfortran.cc.lib xorg.libXmu zlib cmake mesa_glu mesa icu python36 suitesparse tcl-8_5 tk-8_5 --run "make -j12"
+    - nix-shell -p blas liblapack gcc gfortran gfortran.cc.lib xorg.libXmu zlib cmake mesa_noglu icu python36 suitesparse tcl-8_5 tk-8_5 --run "cmake -DCMAKE_INSTALL_PREFIX=`pwd`/inst -DCMAKE_BUILD_TYPE=RELEASE -DUSE_CCACHE=ON -DUSE_GUI=OFF -DTCL_INCLUDE_PATH=/usr/include/tcl8.5/ ../."
+    - nix-shell -p blas liblapack gcc gfortran gfortran.cc.lib xorg.libXmu zlib cmake mesa_noglu icu python36 suitesparse tcl-8_5 tk-8_5 --run "make -j12"
 
 cleanup:
   stage: deploy
