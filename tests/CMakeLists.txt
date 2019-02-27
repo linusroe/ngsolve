@@ -130,3 +130,6 @@ endif(NETGEN_USE_PYTHON OR NOT WIN32)
 add_subdirectory(pytest)
 add_subdirectory(catch)
 add_subdirectory(timings)
+
+
+add_executable(NGS_mytest NGSolve_MyMesh_Test.cpp)
